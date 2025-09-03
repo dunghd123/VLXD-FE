@@ -1,1 +1,244 @@
-/* You can add global styles to this file, and also import other style files */
+/* styles.css */
+
+/* ===== ANGULAR CDK OVERLAY MODAL SYSTEM ===== */
+
+/* Modal backdrop - Angular CDK Overlay */
+.cdk-overlay-backdrop {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Alternative backdrop class for better compatibility */
+.cdk-overlay-backdrop.modal-backdrop {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px);
+}
+
+/* Ensure backdrop is visible */
+.cdk-overlay-backdrop,
+.cdk-overlay-backdrop.modal-backdrop {
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 1000 !important;
+}
+
+/* Modal panel container - Angular CDK Overlay */
+.cdk-overlay-pane {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 40px 20px !important; /* Cách lề trên dưới 40px, trái phải 20px */
+  pointer-events: none;
+  z-index: 1001 !important;
+}
+
+/* Modal content wrapper */
+.cdk-overlay-pane > * {
+  pointer-events: auto;
+  max-width: 90vw;
+  max-height: 90vh;
+  min-width: 300px;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+  position: relative;
+}
+
+/* Modal animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Responsive modal panel */
+@media (max-width: 768px) {
+  .cdk-overlay-pane {
+    padding: 30px 16px !important; /* Giảm padding trên mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .cdk-overlay-pane {
+    padding: 20px 12px !important; /* Giảm padding trên mobile nhỏ */
+  }
+}
+
+/* ===== MODAL UTILITY CLASSES ===== */
+
+/* Modal sizes - apply to the component content */
+.modal-sm {
+  max-width: 500px !important;
+}
+
+.modal-md {
+  max-width: 700px !important;
+}
+
+.modal-lg {
+  max-width: 900px !important;
+}
+
+.modal-xl {
+  max-width: 1100px !important;
+}
+
+/* Modal positions */
+.modal-top .cdk-overlay-pane {
+  align-items: flex-start !important;
+  padding-top: 60px !important;
+}
+
+.modal-bottom .cdk-overlay-pane {
+  align-items: flex-end !important;
+  padding-bottom: 60px !important;
+}
+
+.modal-left .cdk-overlay-pane {
+  justify-content: flex-start !important;
+  padding-left: 60px !important;
+}
+
+.modal-right .cdk-overlay-pane {
+  justify-content: flex-end !important;
+  padding-right: 60px !important;
+}
+
+/* Modal themes */
+.modal-dark {
+  background: #1a202c !important;
+  color: #e2e8f0 !important;
+}
+
+.modal-glass {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ===== RESPONSIVE UTILITIES ===== */
+
+@media (max-width: 768px) {
+  .modal-top .cdk-overlay-pane,
+  .modal-bottom .cdk-overlay-pane {
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
+  }
+  
+  .modal-left .cdk-overlay-pane,
+  .modal-right .cdk-overlay-pane {
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-top .cdk-overlay-pane,
+  .modal-bottom .cdk-overlay-pane {
+    padding-top: 30px !important;
+    padding-bottom: 30px !important;
+  }
+  
+  .modal-left .cdk-overlay-pane,
+  .modal-right .cdk-overlay-pane {
+    padding-left: 30px !important;
+    padding-right: 30px !important;
+  }
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* ===== LEGACY SUPPORT (if needed) ===== */
+
+/* Keep old classes for backward compatibility */
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.modal-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 90vw;
+  max-height: 90vh;
+  min-width: 300px;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* ===== BROWSER COMPATIBILITY & FALLBACKS ===== */
+
+/* Force backdrop visibility */
+.cdk-overlay-backdrop,
+.cdk-overlay-backdrop.modal-backdrop,
+.cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
+  background: rgba(0, 0, 0, 0.6) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* Ensure modal content is properly positioned */
+.cdk-overlay-pane,
+.cdk-overlay-pane.cdk-overlay-pane-showing {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 40px 20px !important;
+  pointer-events: none;
+  z-index: 1001 !important;
+}
+
+/* Force modal content to be visible */
+.cdk-overlay-pane > * {
+  pointer-events: auto !important;
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  min-width: 300px !important;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-out;
+  position: relative;
+  z-index: 1002 !important;
+}
+
+/* ===== DEBUGGING HELPERS ===== */
+
+/* Uncomment these lines if you need to debug modal positioning */
+/*
+.cdk-overlay-backdrop {
+  border: 2px solid red !important;
+}
+
+.cdk-overlay-pane {
+  border: 2px solid blue !important;
+}
+
+.cdk-overlay-pane > * {
+  border: 2px solid green !important;
+}
+*/

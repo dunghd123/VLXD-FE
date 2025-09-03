@@ -1,0 +1,71 @@
+<div class="manager-layout">
+  <header class="manager-header">
+    <div class="header-left">
+      <div class="logo">
+        <i class="fas fa-chart-line"></i>
+        <h1>Manager Dashboard</h1>
+      </div>
+    </div>
+    <div class="user-info">
+      <div class="user-avatar">
+        <i class="fas fa-user-circle"></i>
+      </div>
+      <div class="user-details">
+        <span class="user-name">{{ currentUser?.fullName }}</span>
+        <span class="user-role">Manager</span>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Đăng xuất</span>
+      </button>
+    </div>
+  </header>
+  
+  <div class="layout-container">
+    <nav class="manager-nav" [class.collapsed]="isSidebarCollapsed">
+      <div class="nav-header">
+        <button class="sidebar-toggle" (click)="toggleSidebar()" title="Thu gọn/Mở rộng menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      <div class="nav-items">
+        <a routerLink="/manager/dashboard" routerLinkActive="active" title="Dashboard - Tổng quan hệ thống">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+        <a routerLink="/manager/users" routerLinkActive="active" title="Quản lý người dùng - Thêm, sửa, xóa người dùng">
+          <i class="fas fa-users"></i>
+          <span>Quản lý người dùng</span>
+        </a>
+        <a routerLink="/manager/products" routerLinkActive="active" title="Quản lý sản phẩm - Thêm, sửa, xóa sản phẩm">
+          <i class="fas fa-box"></i>
+          <span>Quản lý sản phẩm</span>
+        </a>
+        <a routerLink="/manager/categories" routerLinkActive="active" title="Quản lý danh mục - Phân loại sản phẩm">
+          <i class="fas fa-tags"></i>
+          <span>Quản lý danh mục</span>
+        </a>
+        <a routerLink="/manager/suppliers" routerLinkActive="active" title="Quản lý nhà cung cấp - Thông tin đối tác">
+          <i class="fas fa-truck"></i>
+          <span>Quản lý nhà cung cấp</span>
+        </a>
+        <a routerLink="/manager/customers" routerLinkActive="active" title="Quản lý khách hàng - Thông tin khách hàng">
+          <i class="fas fa-user-friends"></i>
+          <span>Quản lý khách hàng</span>
+        </a>
+        <a routerLink="/manager/orders" routerLinkActive="active" title="Quản lý đơn hàng - Theo dõi đơn hàng">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Quản lý đơn hàng</span>
+        </a>
+        <a routerLink="/manager/reports" routerLinkActive="active" title="Báo cáo - Thống kê và phân tích">
+          <i class="fas fa-chart-bar"></i>
+          <span>Báo cáo</span>
+        </a>
+      </div>
+    </nav>
+    
+    <main class="manager-content" [class.sidebar-collapsed]="isSidebarCollapsed">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

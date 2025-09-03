@@ -1,0 +1,516 @@
+/* ===== ADD-USER MODAL STYLES ===== */
+
+/* Dialog container - now works with Angular CDK Overlay */
+.dialog {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 600px; /* Minimum width for better form layout */
+}
+
+/* Dialog header */
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+  flex-shrink: 0;
+}
+
+.dialog-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #e9ecef;
+  color: #333;
+}
+
+/* Dialog body - scrollable content area */
+.dialog-body {
+  padding: 24px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  max-height: calc(100vh - 200px); /* Prevent overflow */
+}
+
+/* Form grid layout - improved for wider screens */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* Special layout for date and gender fields */
+.grid .date-gender-row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 0; /* Remove extra margin */
+}
+
+/* Optimize form height */
+.grid label {
+  margin-bottom: 0; /* Remove extra margins */
+}
+
+.grid label:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive adjustments for date-gender row */
+@media (max-width: 768px) {
+  .grid .date-gender-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* Form labels */
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+label span {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+/* Form inputs and selects */
+input, select {
+  padding: 12px 16px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* Dialog actions - FORCE VISIBILITY */
+.dialog-actions {
+  display: flex !important;
+  gap: 16px !important;
+  justify-content: flex-end !important;
+  padding-top: 24px !important;
+  border-top: 1px solid #e0e0e0 !important;
+  flex-wrap: wrap !important;
+  flex-shrink: 0 !important;
+  margin-top: 20px !important;
+  background: white !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Button styles - FORCE VISIBILITY */
+.dialog-actions button,
+.dialog-actions .btn-cancel,
+.dialog-actions .btn-submit {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  padding: 12px 24px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  min-width: 100px !important;
+  min-height: 44px !important;
+  text-decoration: none !important;
+  line-height: 1.5 !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+  user-select: none !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Button type specific styles */
+.dialog-actions button[type="button"],
+.dialog-actions .btn-cancel {
+  background: #6c757d !important;
+  color: white !important;
+}
+
+.dialog-actions button[type="button"]:hover,
+.dialog-actions .btn-cancel:hover {
+  background: #5a6268 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dialog-actions button[type="submit"],
+.dialog-actions .btn-submit {
+  background: #007bff !important;
+  color: white !important;
+}
+
+.dialog-actions button[type="submit"]:hover:not(:disabled),
+.dialog-actions .btn-submit:hover:not(:disabled) {
+  background: #0056b3 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dialog-actions button[type="submit"]:disabled,
+.dialog-actions .btn-submit:disabled {
+  background: #ccc !important;
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+}
+
+/* Error message */
+.error {
+  color: #dc3545;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  padding: 16px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+/* Field error styling */
+.field-error {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.field-error::before {
+  content: '⚠';
+  font-size: 14px;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+@media (max-width: 1200px) {
+  .dialog {
+    min-width: 500px;
+  }
+  
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .grid .date-gender-row {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dialog {
+    min-width: 90vw;
+    max-width: 95vw;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  
+  .grid .date-gender-row {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  
+  .dialog-header {
+    padding: 16px 20px;
+  }
+  
+  .dialog-header h3 {
+    font-size: 16px;
+  }
+  
+  .close-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 20px;
+  }
+  
+  .dialog-body {
+    padding: 20px;
+  }
+  
+  label span {
+    font-size: 13px;
+  }
+  
+  input, select {
+    padding: 12px 14px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .dialog-actions {
+    padding-top: 20px !important;
+    gap: 12px !important;
+    justify-content: stretch !important;
+  }
+  
+  .dialog-actions button,
+  .dialog-actions .btn-cancel,
+  .dialog-actions .btn-submit {
+    flex: 1 !important;
+    padding: 14px 18px !important;
+    font-size: 14px !important;
+    min-width: auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .dialog {
+    min-width: 95vw;
+    max-width: 98vw;
+  }
+  
+  .grid {
+    gap: 16px;
+  }
+  
+  .grid .date-gender-row {
+    gap: 16px;
+  }
+  
+  .dialog-header {
+    padding: 14px 16px;
+  }
+  
+  .dialog-header h3 {
+    font-size: 15px;
+  }
+  
+  .close-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 18px;
+  }
+  
+  .dialog-body {
+    padding: 16px;
+  }
+  
+  label span {
+    font-size: 12px;
+  }
+  
+  input, select {
+    padding: 12px 12px;
+    font-size: 16px;
+  }
+  
+  .dialog-actions {
+    padding-top: 18px !important;
+    gap: 10px !important;
+    flex-direction: column !important;
+  }
+  
+  .dialog-actions button,
+  .dialog-actions .btn-cancel,
+  .dialog-actions .btn-submit {
+    width: 100% !important;
+    padding: 16px 18px !important;
+    font-size: 14px !important;
+  }
+  
+  .error {
+    padding: 14px;
+    font-size: 13px;
+    margin-top: 18px;
+  }
+}
+
+@media (max-width: 360px) {
+  .dialog {
+    min-width: 98vw;
+    max-width: 99vw;
+  }
+  
+  .grid {
+    gap: 14px;
+  }
+  
+  .grid .date-gender-row {
+    gap: 14px;
+  }
+  
+  .dialog-header {
+    padding: 12px 14px;
+  }
+  
+  .dialog-header h3 {
+    font-size: 14px;
+  }
+  
+  .dialog-body {
+    padding: 14px;
+  }
+  
+  input, select {
+    padding: 10px 10px;
+  }
+  
+  .dialog-actions button,
+  .dialog-actions .btn-cancel,
+  .dialog-actions .btn-submit {
+    padding: 14px 16px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* ===== TOUCH-FRIENDLY IMPROVEMENTS ===== */
+
+@media (hover: none) and (pointer: coarse) {
+  .close-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  .dialog-actions button,
+  .dialog-actions .btn-cancel,
+  .dialog-actions .btn-submit {
+    min-height: 48px !important;
+    min-width: 120px !important;
+  }
+  
+  input, select {
+    min-height: 44px;
+  }
+}
+
+/* ===== ACCESSIBILITY SUPPORT ===== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .dialog {
+    border: 2px solid #000;
+  }
+  
+  input, select {
+    border-width: 2px;
+  }
+  
+  .field-error {
+    font-weight: bold;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .dialog,
+  button,
+  input,
+  select,
+  .close-btn {
+    transition: none;
+  }
+  
+  .dialog-actions button:hover {
+    transform: none;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .dialog {
+    background: #2d3748;
+    color: #e2e8f0;
+  }
+  
+  .dialog-header {
+    background: #4a5568;
+    border-bottom-color: #718096;
+  }
+  
+  .dialog-header h3 {
+    color: #e2e8f0;
+  }
+  
+  label span {
+    color: #e2e8f0;
+  }
+  
+  input, select {
+    background: #4a5568;
+    border-color: #718096;
+    color: #e2e8f0;
+  }
+  
+  input:focus, select:focus {
+    border-color: #63b3ed;
+    box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.25);
+  }
+  
+  .dialog-actions {
+    border-top-color: #718096;
+  }
+  
+  .dialog-actions button,
+  .dialog-actions .btn-cancel,
+  .dialog-actions .btn-submit {
+    background: #4a5568 !important;
+    border-color: #718096 !important;
+    color: #e2e8f0 !important;
+  }
+  
+  .dialog-actions button[type="button"]:hover,
+  .dialog-actions .btn-cancel:hover {
+    background: #2d3748 !important;
+  }
+  
+  .dialog-actions button[type="submit"]:hover:not(:disabled),
+  .dialog-actions .btn-submit:hover:not(:disabled) {
+    background: #2b6cb0 !important;
+  }
+  
+  .error {
+    background: #742a2a;
+    border-color: #c53030;
+    color: #feb2b2;
+  }
+}

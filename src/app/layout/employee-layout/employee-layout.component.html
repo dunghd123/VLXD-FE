@@ -1,0 +1,63 @@
+<div class="employee-layout">
+  <header class="employee-header">
+    <div class="header-left">
+      <div class="logo">
+        <i class="fas fa-user-tie"></i>
+        <h1>Employee Dashboard</h1>
+      </div>
+    </div>
+    <div class="user-info">
+      <div class="user-avatar">
+        <i class="fas fa-user-circle"></i>
+      </div>
+      <div class="user-details">
+        <span class="user-name">{{ currentUser?.fullName }}</span>
+        <span class="user-role">Employee</span>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Đăng xuất</span>
+      </button>
+    </div>
+  </header>
+  
+  <div class="layout-container">
+    <nav class="employee-nav" [class.collapsed]="isSidebarCollapsed">
+      <div class="nav-header">
+        <button class="sidebar-toggle" (click)="toggleSidebar()" title="Thu gọn/Mở rộng menu">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      <div class="nav-items">
+        <a routerLink="/employee/dashboard" routerLinkActive="active" title="Dashboard - Tổng quan công việc">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+        <a routerLink="/employee/products" routerLinkActive="active" title="Xem sản phẩm - Danh sách và thông tin sản phẩm">
+          <i class="fas fa-box"></i>
+          <span>Xem sản phẩm</span>
+        </a>
+        <a routerLink="/employee/customers" routerLinkActive="active" title="Xem khách hàng - Thông tin khách hàng">
+          <i class="fas fa-user-friends"></i>
+          <span>Xem khách hàng</span>
+        </a>
+        <a routerLink="/employee/orders" routerLinkActive="active" title="Xử lý đơn hàng - Quản lý và xử lý đơn hàng">
+          <i class="fas fa-shopping-cart"></i>
+          <span>Xử lý đơn hàng</span>
+        </a>
+        <a routerLink="/employee/input-orders" routerLinkActive="active" title="Nhập hàng - Quản lý hàng nhập kho">
+          <i class="fas fa-truck-loading"></i>
+          <span>Nhập hàng</span>
+        </a>
+        <a routerLink="/employee/output-orders" routerLinkActive="active" title="Xuất hàng - Quản lý hàng xuất kho">
+          <i class="fas fa-truck"></i>
+          <span>Xuất hàng</span>
+        </a>
+      </div>
+    </nav>
+    
+    <main class="employee-content" [class.sidebar-collapsed]="isSidebarCollapsed">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

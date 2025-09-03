@@ -1,0 +1,107 @@
+<div class="employee-dashboard">
+  <div class="dashboard-header">
+    <h2>Employee Dashboard</h2>
+    <p>Xử lý đơn hàng và quản lý công việc hàng ngày</p>
+  </div>
+  
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-shopping-cart"></i>
+      </div>
+      <div class="stat-content">
+        <h3>25</h3>
+        <p>Đơn hàng mới</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="stat-content">
+        <h3>12</h3>
+        <p>Đang xử lý</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="stat-content">
+        <h3>89</h3>
+        <p>Hoàn thành</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-star"></i>
+      </div>
+      <div class="stat-content">
+        <h3>4.8</h3>
+        <p>Đánh giá</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="dashboard-card">
+      <div class="card-header">
+        <i class="fas fa-box"></i>
+        <h3>Xem sản phẩm</h3>
+      </div>
+      <p>Xem danh sách sản phẩm và thông tin chi tiết</p>
+      <button routerLink="/employee/products" class="card-btn">
+        <i class="fas fa-arrow-right"></i>
+        <span>Truy cập</span>
+      </button>
+    </div>
+    
+    <div class="dashboard-card">
+      <div class="card-header">
+        <i class="fas fa-user-friends"></i>
+        <h3>Xem khách hàng</h3>
+      </div>
+      <p>Xem thông tin khách hàng và lịch sử mua hàng</p>
+      <button routerLink="/employee/customers" class="card-btn">
+        <i class="fas fa-arrow-right"></i>
+        <span>Truy cập</span>
+      </button>
+    </div>
+    
+    <div class="dashboard-card">
+      <div class="card-header">
+        <i class="fas fa-shopping-cart"></i>
+        <h3>Xử lý đơn hàng</h3>
+      </div>
+      <p>Xử lý đơn hàng mới và cập nhật trạng thái</p>
+      <button routerLink="/employee/orders" class="card-btn">
+        <i class="fas fa-arrow-right"></i>
+        <span>Truy cập</span>
+      </button>
+    </div>
+    
+    <div class="dashboard-card">
+      <div class="card-header">
+        <i class="fas fa-truck-loading"></i>
+        <h3>Nhập hàng</h3>
+      </div>
+      <p>Xử lý đơn nhập hàng và kiểm tra chất lượng</p>
+      <button routerLink="/employee/input-orders" class="card-btn">
+        <i class="fas fa-arrow-right"></i>
+        <span>Truy cập</span>
+      </button>
+    </div>
+    
+    <div class="dashboard-card">
+      <div class="card-header">
+        <i class="fas fa-truck"></i>
+        <h3>Xuất hàng</h3>
+      </div>
+      <p>Xử lý đơn xuất hàng và chuẩn bị giao hàng</p>
+      <button routerLink="/employee/output-orders" class="card-btn">
+        <i class="fas fa-arrow-right"></i>
+        <span>Truy cập</span>
+      </button>
+    </div>
+  </div>
+</div>

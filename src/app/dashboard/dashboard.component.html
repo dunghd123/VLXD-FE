@@ -1,0 +1,148 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <div class="logo">
+        <i class="material-icons">construction</i>
+        <span>VLXD Management</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="user-info">
+        <i class="material-icons">account_circle</i>
+        <span>Admin</span>
+        <button class="logout-btn" (click)="logout()">
+          <i class="material-icons" >logout</i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <nav class="nav-menu">
+        <a href="#" class="nav-item active">
+          <i class="material-icons">dashboard</i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-item">
+          <i class="material-icons">inventory</i>
+          <span>Sản phẩm</span>
+        </a>
+        <a href="#" class="nav-item">
+          <i class="material-icons">category</i>
+          <span>Danh mục</span>
+        </a>
+        <a href="#" class="nav-item">
+          <i class="material-icons">people</i>
+          <span>Khách hàng</span>
+        </a>
+        <a href="#" class="nav-item">
+          <i class="material-icons">local_shipping</i>
+          <span>Nhà cung cấp</span>
+        </a>
+        <a href="#" class="nav-item">
+          <i class="material-icons">receipt</i>
+          <span>Đơn hàng</span>
+        </a>
+        <a href="#" class="nav-item">
+          <i class="material-icons">analytics</i>
+          <span>Báo cáo</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <h1>Chào mừng trở lại!</h1>
+        <p>Quản lý hệ thống vật liệu xây dựng của bạn</p>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="material-icons">inventory</i>
+          </div>
+          <div class="stat-content">
+            <h3>1,234</h3>
+            <p>Tổng sản phẩm</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="material-icons">receipt</i>
+          </div>
+          <div class="stat-content">
+            <h3>567</h3>
+            <p>Đơn hàng hôm nay</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="material-icons">people</i>
+          </div>
+          <div class="stat-content">
+            <h3>89</h3>
+            <p>Khách hàng mới</p>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="material-icons">trending_up</i>
+          </div>
+          <div class="stat-content">
+            <h3>₫2.5M</h3>
+            <p>Doanh thu hôm nay</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activities -->
+      <div class="recent-activities">
+        <h2>Hoạt động gần đây</h2>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="activity-icon">
+              <i class="material-icons">add_shopping_cart</i>
+            </div>
+            <div class="activity-content">
+              <h4>Đơn hàng mới #1234</h4>
+              <p>Khách hàng Nguyễn Văn A đã đặt hàng</p>
+              <span class="activity-time">2 phút trước</span>
+            </div>
+          </div>
+
+          <div class="activity-item">
+            <div class="activity-icon">
+              <i class="material-icons">inventory_2</i>
+            </div>
+            <div class="activity-content">
+              <h4>Cập nhật kho</h4>
+              <p>Nhập thêm 500 viên gạch ống</p>
+              <span class="activity-time">15 phút trước</span>
+            </div>
+          </div>
+
+          <div class="activity-item">
+            <div class="activity-icon">
+              <i class="material-icons">person_add</i>
+            </div>
+            <div class="activity-content">
+              <h4>Khách hàng mới</h4>
+              <p>Đăng ký tài khoản mới: Công ty ABC</p>
+              <span class="activity-time">1 giờ trước</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

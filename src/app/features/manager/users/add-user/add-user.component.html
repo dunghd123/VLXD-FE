@@ -1,0 +1,123 @@
+<div class="dialog" [class.mobile]="isMobile">
+  <div class="dialog-header">
+    <h3>Thêm người dùng mới</h3>
+    <button type="button" class="close-btn" (click)="closeModal()" aria-label="Đóng" title="Đóng">×</button>
+  </div>
+  <form #form="ngForm" class="dialog-body" (ngSubmit)="onSubmit()" novalidate>
+    <div class="grid">
+      <label>
+        <span>Tên đăng nhập</span>
+        <input 
+          type="text" 
+          name="username" 
+          [(ngModel)]="model.username" 
+          required 
+          autocomplete="username"
+          [attr.aria-describedby]="'username-error'"
+          placeholder="Nhập tên đăng nhập" />
+        <div *ngIf="form.submitted && form.controls['username']?.invalid" class="field-error" id="username-error">
+          <span *ngIf="form.controls['username']?.errors?.['required']">Tên đăng nhập là bắt buộc</span>
+        </div>
+      </label>
+      <label>
+        <span>Mật khẩu</span>
+        <input 
+          type="password" 
+          name="password" 
+          [(ngModel)]="model.password" 
+          required 
+          minlength="8" 
+          autocomplete="new-password"
+          [attr.aria-describedby]="'password-error'"
+          placeholder="Nhập mật khẩu (tối thiểu 8 ký tự)" />
+        <div *ngIf="form.submitted && form.controls['password']?.invalid" class="field-error" id="password-error">
+          <span *ngIf="form.controls['password']?.errors?.['required']">Mật khẩu là bắt buộc</span>
+          <span *ngIf="form.controls['password']?.errors?.['minlength']">Mật khẩu phải có ít nhất 8 ký tự</span>
+        </div>
+      </label>
+      <label>
+        <span>Họ và tên</span>
+        <input 
+          type="text" 
+          name="fullName" 
+          [(ngModel)]="model.fullName" 
+          required 
+          autocomplete="name"
+          [attr.aria-describedby]="'fullName-error'"
+          placeholder="Nhập họ và tên đầy đủ" />
+        <div *ngIf="form.submitted && form.controls['fullName']?.invalid" class="field-error" id="fullName-error">
+          <span *ngIf="form.controls['fullName']?.errors?.['required']">Họ và tên là bắt buộc</span>
+        </div>
+      </label>
+      <label>
+        <span>Địa chỉ</span>
+        <input 
+          type="text" 
+          name="address" 
+          [(ngModel)]="model.address" 
+          autocomplete="street-address"
+          placeholder="Nhập địa chỉ (không bắt buộc)" />
+      </label>
+      
+      <!-- Date and Gender on same row -->
+      <div class="date-gender-row">
+        <label>
+          <span>Ngày sinh</span>
+          <input 
+            type="date" 
+            name="dateOfBirth" 
+            [(ngModel)]="model.dateOfBirth" 
+            required 
+            [attr.aria-describedby]="'dateOfBirth-error'"
+            [max]="getMaxDate()" />
+          <div *ngIf="form.submitted && form.controls['dateOfBirth']?.invalid" class="field-error" id="dateOfBirth-error">
+            <span *ngIf="form.controls['dateOfBirth']?.errors?.['required']">Ngày sinh là bắt buộc</span>
+          </div>
+        </label>
+        
+        <label>
+          <span>Giới tính</span>
+          <select 
+            name="gender" 
+            [(ngModel)]="model.gender" 
+            required 
+            [attr.aria-describedby]="'gender-error'">
+            <option value="" disabled selected>Chọn giới tính</option>
+            <option value="MALE">Nam</option>
+            <option value="FEMALE">Nữ</option>
+            <option value="OTHER">Khác</option>
+          </select>
+          <div *ngIf="form.submitted && form.controls['gender']?.invalid" class="field-error" id="gender-error">
+            <span *ngIf="form.controls['gender']?.errors?.['required']">Giới tính là bắt buộc</span>
+          </div>
+        </label>
+
+        <label>
+          <span>Vai trò</span>
+          <select 
+            name="role" 
+            [(ngModel)]="model.role" 
+            required 
+            [attr.aria-describedby]="'role-error'">
+            <option value="" disabled selected>Chọn vai trò</option>
+            <option value="MANAGER">Quản lý</option>
+            <option value="EMPLOYEE">Nhân viên</option>
+          </select>
+          <div *ngIf="form.submitted && form.controls['role']?.invalid" class="field-error" id="role-error">
+            <span *ngIf="form.controls['role']?.errors?.['required']">Vai trò là bắt buộc</span>
+          </div>
+        </label>
+      </div>
+    </div>
+    <div class="dialog-actions">
+      <button type="button" (click)="onCancel()" class="btn-cancel">Hủy</button>
+      <button type="submit" [disabled]="form.invalid || submitting" class="btn-submit">
+        <span *ngIf="!submitting">Lưu</span>
+        <span *ngIf="submitting">Đang lưu...</span>
+      </button>
+    </div>
+    <div class="error" *ngIf="error" role="alert">{{ error }}</div>
+  </form>
+</div>
+
+
