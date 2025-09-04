@@ -26,6 +26,13 @@
   flex-shrink: 0;
 }
 
+/* Required field indicator */
+label span .required {
+  color: #dc3545 !important;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
 .dialog-header h3 {
   margin: 0;
   font-size: 18px;
@@ -80,6 +87,14 @@
   margin-bottom: 0; /* Remove extra margin */
 }
 
+.grid .phone-manager-row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 0; /* Remove extra margin */
+}
+
 /* Optimize form height */
 .grid label {
   margin-bottom: 0; /* Remove extra margins */
@@ -92,6 +107,11 @@
 /* Responsive adjustments for date-gender row */
 @media (max-width: 768px) {
   .grid .date-gender-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .grid .phone-manager-row {
     grid-template-columns: 1fr;
     gap: 20px;
   }
@@ -242,6 +262,10 @@ input:focus, select:focus {
   .grid .date-gender-row {
     gap: 20px;
   }
+  
+  .grid .phone-manager-row {
+    gap: 20px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -256,6 +280,11 @@ input:focus, select:focus {
   }
   
   .grid .date-gender-row {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  
+  .grid .phone-manager-row {
     grid-template-columns: 1fr;
     gap: 18px;
   }
@@ -280,6 +309,10 @@ input:focus, select:focus {
   
   label span {
     font-size: 13px;
+  }
+  
+  label span .required {
+    color: #dc3545 !important;
   }
   
   input, select {
@@ -317,6 +350,10 @@ input:focus, select:focus {
     gap: 16px;
   }
   
+  .grid .phone-manager-row {
+    gap: 16px;
+  }
+  
   .dialog-header {
     padding: 14px 16px;
   }
@@ -337,6 +374,10 @@ input:focus, select:focus {
   
   label span {
     font-size: 12px;
+  }
+  
+  label span .required {
+    color: #dc3545 !important;
   }
   
   input, select {
@@ -376,6 +417,10 @@ input:focus, select:focus {
   }
   
   .grid .date-gender-row {
+    gap: 14px;
+  }
+  
+  .grid .phone-manager-row {
     gap: 14px;
   }
   
@@ -473,6 +518,10 @@ input:focus, select:focus {
   
   label span {
     color: #e2e8f0;
+  }
+  
+  label span .required {
+    color: #dc3545 !important;
   }
   
   input, select {

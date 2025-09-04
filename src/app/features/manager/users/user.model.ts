@@ -5,4 +5,14 @@ export interface UserResponse{
      phone: String,
      status: String,
      gender: String,
-}
+};
+export interface EmployeeResponse{
+      id: number,
+      name: string,
+      gender: string,
+      dob: string,
+      address: string,
+      phoneNum: string,
+      description: string,
+      isActive: boolean,
+};

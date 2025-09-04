@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { LoginCredentials, TokenResponse, User, Role } from '../models/auth.models';
-import { UserResponse } from '../../../features/manager/users/user.model';
+import { EmployeeResponse, UserResponse } from '../../../features/manager/users/user.model';
 import { catchError, tap } from 'rxjs/operators';
 import { Observable as RxObservable } from 'rxjs';
 import { CreateUserRequest } from '../../../features/manager/users/add-user/add-user.model';
@@ -12,14 +12,13 @@ import { CreateUserRequest } from '../../../features/manager/users/add-user/add-
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8081/api/v1/user';
+  private userUrl = 'http://localhost:8081/api/v1/user';
+  private employeeUrl= 'http://localhost:8081/api/v1/employee';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
-  private _isRefreshing = false;
-
-  get isRefreshing(): boolean {
-    return this._isRefreshing;
-  }
+  
+  // Cờ refresh queue
+  private refreshInProgress?: Promise<void>;
 
   constructor(
     private http: HttpClient,
@@ -28,42 +27,57 @@ export class AuthService {
     this.loadUserFromStorage();
   }
 
+  // ================= AUTH ==================
   login(credentials: LoginCredentials): Observable<TokenResponse> {
-    return this.http.post<TokenResponse>(`${this.apiUrl}/login`, credentials);
+    return this.http.post<TokenResponse>(`${this.userUrl}/login`, credentials);
   }
 
+  logout(username?: string): void {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user_info');
+    this.currentUserSubject.next(null);
+
+    this.router.navigate(['/login']);
+    this.refreshInProgress = undefined;
+
+    if (username) {
+      this.http.put(`${this.userUrl}/logout?username=${username}`, {}).subscribe();
+    }
+  }
+
+  // ================= EMPLOYEE ==================
   getAllEmployees(): Observable<UserResponse[]> {
-    if (!this.isLoggedIn()) {
-      throw new Error('User not logged in');
-    }
-    if (!this.isManager()) {
-      throw new Error('Access denied: Manager role required');
-    }
+    if (!this.isLoggedIn()) throw new Error('User not logged in');
+    if (!this.isManager()) throw new Error('Access denied: Manager role required');
 
     return this.retryWithTokenRefresh(() => 
-      this.http.get<UserResponse[]>(`${this.apiUrl}/getAllEmployee`)
+      this.http.get<UserResponse[]>(`${this.userUrl}/getAllEmployee`)
+    );
+  }
+
+  getAllManagers(): Observable<EmployeeResponse[]> {
+    return this.retryWithTokenRefresh(() =>
+      this.http.get<EmployeeResponse[]>(`${this.employeeUrl}/getAllManager`)
     );
   }
 
   createEmployeeUser(payload: CreateUserRequest): RxObservable<any> {
-    if (!this.isLoggedIn() || !this.isManager()) {
-      throw new Error('Access denied');
-    }
+    if (!this.isLoggedIn() || !this.isManager()) throw new Error('Access denied');
     return this.retryWithTokenRefresh(() =>
-      this.http.post(`${this.apiUrl}/createEmployee`, payload)
+      this.http.post(`${this.userUrl}/add-new-user`, payload)
     );
   }
 
+  // ================= TOKEN ==================
   saveTokens(accessToken: string, refreshToken: string): void {
     localStorage.setItem('access_token', accessToken);
     localStorage.setItem('refresh_token', refreshToken);
   }
 
   saveUserInfo(userInfo: { username: string; role: Role | string }): void {
-    // Xử lý role có thể là string từ backend hoặc enum từ frontend
     let role: Role;
     if (typeof userInfo.role === 'string') {
-      // Chuyển đổi string role thành enum Role
       role = this.convertStringToRole(userInfo.role);
     } else {
       role = userInfo.role;
@@ -80,7 +94,93 @@ export class AuthService {
     this.currentUserSubject.next(user);
   }
 
-  // Helper method để chuyển đổi string role thành enum Role
+  getAccessToken(): string | null {
+    return localStorage.getItem('access_token');
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem('refresh_token');
+  }
+
+  refreshToken(): Observable<any> {
+    if (this.refreshInProgress) {
+      // Nếu đang refresh, wrap Promise thành Observable
+      return new Observable((observer) => {
+        this.refreshInProgress!
+          .then(() => {
+            observer.next(true);
+            observer.complete();
+          })
+          .catch((err) => observer.error(err));
+      });
+    }
+
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      this.logout();
+      return throwError(() => new Error('No refresh token available'));
+    }
+
+    // Tạo promise refresh
+    this.refreshInProgress = this.http.post<TokenResponse>(
+      `${this.userUrl}/refresh-token`,
+      { refreshToken }
+    ).toPromise()
+      .then((response : any) => {
+        this.saveTokens(response.accessToken, refreshToken);
+
+        if (response.role) {
+          const currentUser = this.getCurrentUser();
+          if (currentUser) {
+            currentUser.role = this.convertStringToRole(response.role);
+            this.saveUserInfo({ username: currentUser.username, role: currentUser.role });
+          }
+        }
+        console.log('Token refreshed successfully');
+      })
+      .catch((error) => {
+        console.error('Token refresh failed:', error);
+        this.logout();
+        throw error;
+      })
+      .finally(() => {
+        this.refreshInProgress = undefined;
+      });
+
+    return new Observable((observer) => {
+      this.refreshInProgress!
+        .then(() => {
+          observer.next(true);
+          observer.complete();
+        })
+        .catch((err) => observer.error(err));
+    });
+  }
+
+  retryWithTokenRefresh<T>(request: () => Observable<T>): Observable<T> {
+    return new Observable((observer) => {
+      request().subscribe({
+        next: (res) => {
+          observer.next(res);
+          observer.complete();
+        },
+        error: (err) => {
+          if (err.status === 401 || err.status === 403) {
+            this.refreshToken().subscribe({
+              next: () => {
+                request().subscribe(observer);
+              },
+              error: (refreshErr) => observer.error(refreshErr)
+            });
+          } else {
+            observer.error(err);
+          }
+        }
+      });
+    });
+  }
+
+  // ================= ROLE / USER ==================
   private convertStringToRole(roleString: string): Role {
     const upperRole = roleString.toUpperCase();
     switch (upperRole) {
@@ -94,51 +194,37 @@ export class AuthService {
     }
   }
 
-  getAccessToken(): string | null {
-    const token = localStorage.getItem('access_token');
-    return token;
-  }
-
-  getRefreshToken(): string | null {
-    const token = localStorage.getItem('refresh_token');
-    return token;
+  getCurrentRole(): Role | null {
+    const user = this.getCurrentUser();
+    return user ? user.role : null;
   }
 
   getCurrentUser(): User | null {
-    const user = this.currentUserSubject.value;
-    return user;
-  }
-
-  getCurrentRole(): Role | null {
-    const user = this.getCurrentUser();
-    const role = user ? user.role : null;
-    
-    return role;
-  }
-
-  hasRole(role: Role): boolean {
-    const currentRole = this.getCurrentRole();
-    const hasRole = currentRole === role;
-    
-    // Try string comparison as fallback
-    if (!hasRole && currentRole && role) {
-      const stringComparison = String(currentRole).toUpperCase() === String(role).toUpperCase();
-      return stringComparison;
-    }
-    
-    return hasRole;
+    return this.currentUserSubject.value;
   }
 
   isManager(): boolean {
-    const hasRole = this.hasRole(Role.MANAGER);
-    return hasRole;
+    return this.hasRole(Role.MANAGER);
   }
 
   isEmployee(): boolean {
     return this.hasRole(Role.EMPLOYEE);
   }
 
-  // Kiểm tra xem token có hết hạn hay không
+  hasRole(role: Role): boolean {
+    const currentRole = this.getCurrentUser()?.role;
+    return currentRole === role ||
+      String(currentRole).toUpperCase() === String(role).toUpperCase();
+  }
+
+  isLoggedIn(): boolean {
+    const hasToken = !!this.getAccessToken();
+    const hasUser = !!this.getCurrentUser();
+    const tokenNotExpired = !this.isTokenExpired();
+    return hasToken && hasUser && tokenNotExpired;
+  }
+
+  // ================= TOKEN CHECK ==================
   isTokenExpired(): boolean {
     const token = this.getAccessToken();
     if (!token) return true;
@@ -153,90 +239,6 @@ export class AuthService {
     }
   }
 
-  refreshToken(): Observable<any> {
-    if (this.isRefreshing) {
-      // Nếu đang refresh, đợi
-      return throwError(() => new Error('Token refresh in progress'));
-    }
-
-    this._isRefreshing = true;
-    const refreshToken = this.getRefreshToken();
-    
-    if (!refreshToken) {
-      this._isRefreshing = false;
-      this.logout();
-      return throwError(() => new Error('No refresh token available'));
-    }
-
-    return this.http.post(`${this.apiUrl}/refresh-token`, { refreshToken }).pipe(
-      tap((response: any) => {
-        if (response.accessToken) {
-          // Backend trả về role thay vì refreshToken mới
-          // Giữ nguyên refreshToken cũ vì backend không tạo mới
-          this.saveTokens(response.accessToken, refreshToken);
-          
-          // Cập nhật role nếu có thay đổi
-          if (response.role) {
-            const currentUser = this.getCurrentUser();
-            if (currentUser) {
-              currentUser.role = this.convertStringToRole(response.role);
-              this.saveUserInfo({ username: currentUser.username, role: currentUser.role });
-            }
-          }
-          
-          console.log('Token refreshed successfully');
-        }
-      }),
-      catchError((error) => {
-        console.error('Token refresh failed:', error);
-        this.logout();
-        return throwError(() => error);
-      }),
-      tap(() => {
-        this._isRefreshing = false;
-      })
-    );
-  }
-
-  retryWithTokenRefresh<T>(request: () => Observable<T>): Observable<T> {
-    // JWT Interceptor đã xử lý refresh token tự động
-    // Chỉ cần thực hiện request bình thường
-    return request();
-  }
-
-  logout(username?: string): void {
-    // Clear all stored data
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user_info');
-    
-    // Clear current user from BehaviorSubject
-    this.currentUserSubject.next(null);
-    
-    // Reset refresh flag
-    this._isRefreshing = false;
-    
-    // Navigate to login page
-    this.router.navigate(['/login']);
-    
-    // Optionally call logout API if username is provided
-    if (username) {
-      this.http.put(`${this.apiUrl}/logout?username=${username}`, {}).subscribe({
-        next: () => console.log('Logout API call successful'),
-        error: (error) => console.error('Logout API call failed:', error)
-      });
-    }
-  }
-
-  isLoggedIn(): boolean {
-    const hasToken = !!this.getAccessToken();
-    const hasUser = !!this.getCurrentUser();
-    const tokenNotExpired = !this.isTokenExpired();
-    const isLoggedIn = hasToken && hasUser && tokenNotExpired;
-    
-    return isLoggedIn;
-  }
-
   private loadUserFromStorage(): void {
     const userInfo = localStorage.getItem('user_info');
     if (userInfo) {
@@ -247,9 +249,6 @@ export class AuthService {
         console.error('Error parsing user info from storage:', error);
         this.logout();
       }
-    } else {
-      console.log('No user info found in storage');
     }
   }
-
 }

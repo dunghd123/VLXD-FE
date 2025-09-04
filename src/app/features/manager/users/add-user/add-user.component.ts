@@ -1,9 +1,12 @@
-import { Component, Inject, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, HostListener, Input, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { CreateUserRequest } from './add-user.model';
 import { MODAL_DATA } from '../../../../shared/components/modal/modal.token';
 import { ModalService } from '../../../../shared/components/modal/modal.service';
+import { AuthService } from '../../../../core/auth/services/auth.service';
+import { ToastMessageService } from '../../../../shared/services/toast-message.service';
+import { EmployeeResponse } from '../user.model';
 
 @Component({
   selector: 'app-add-user',
@@ -13,12 +16,16 @@ import { ModalService } from '../../../../shared/components/modal/modal.service'
   styleUrls: ['./add-user.component.css']
 })
 export class AddUserComponent implements OnInit {
+  managerList: EmployeeResponse[] = [];
+  @ViewChild('form') form!: NgForm;
 
-  model: CreateUserRequest = {
+  userModel: CreateUserRequest = {
     username: '',
     password: '',
     fullName: '',
     address: '',
+    phone: '',
+    managerId: 0,
     dateOfBirth: '',
     gender: 'MALE',
     role: 'EMPLOYEE'
@@ -30,16 +37,20 @@ export class AddUserComponent implements OnInit {
 
   constructor(
     @Inject(MODAL_DATA) public data: any,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private authService: AuthService,
+    private toast: ToastMessageService,
   ) {
     this.checkDeviceType();
+    this.managerList= data.managerList
   }
 
   ngOnInit() {
     // If data is passed from the modal, use it to pre-populate the form
     if (this.data && this.data.user) {
-      this.model = { ...this.data.user };
+      this.userModel = { ...this.data.user };
     }
+    
   }
 
   @HostListener('window:resize')
@@ -51,28 +62,39 @@ export class AddUserComponent implements OnInit {
     this.isMobile = window.innerWidth <= 768;
   }
 
-  onSubmit() {
+  onSubmit(form: NgForm): void {
     if (this.submitting) return;
-    
+    if (!form.valid) {
+      this.error = 'Vui lòng điền đầy đủ thông tin hợp lệ.';
+      return;
+    }
+
     this.submitting = true;
     this.error = '';
 
-    setTimeout(() => {
-      try {
-        console.log('Creating user:', this.model);
-        
+    this.authService.createEmployeeUser(this.userModel).subscribe({
+      next: (response) => {
+        this.toast.showSuccess('Thành công', response.message);
         this.modalService.close();
-        
+
         if (this.data && this.data.onSuccess) {
-          this.data.onSuccess(this.model);
+          this.data.onSuccess(this.userModel);
         }
-      } catch (err) {
-        this.error = 'Có lỗi xảy ra khi tạo người dùng. Vui lòng thử lại.';
-      } finally {
+        this.submitting = false;
+      },
+      error: (error) => {
+        // this.toast.showError('Lỗi', error.error.message);
+        // // this.error = error?.error?.message || 'Có lỗi xảy ra khi tạo người dùng. Vui lòng thử lại.';
         this.submitting = false;
       }
-    }, 1000);
+    });
   }
+  onRoleChange() {
+    if (this.userModel.role === 'MANAGER') {
+      this.userModel.managerId = 0;
+    }
+  }
+
 
   onCancel() {
     this.modalService.close();
@@ -93,13 +115,12 @@ export class AddUserComponent implements OnInit {
   }
 
   // Handle enter key press on form
-  @HostListener('document:keydown.enter')
-  onEnterKey() {
-    if (!this.submitting) {
-      const form = document.querySelector('form');
-      if (form && form.checkValidity()) {
-        this.onSubmit();
-      }
+@HostListener('document:keydown.enter', ['$event'])
+  onEnterKey(event: KeyboardEvent) {
+    event.preventDefault();
+
+    if (!this.submitting && this.form && this.form.valid) {
+      this.onSubmit(this.form);
     }
   }
 

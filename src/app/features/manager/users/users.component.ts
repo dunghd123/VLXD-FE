@@ -2,10 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/auth/services/auth.service';
-import { UserResponse } from './user.model';
+import { EmployeeResponse, UserResponse } from './user.model';
 import { StatusPipe } from '../../../shared/pipes/status.pipe';
 import { AddUserComponent } from './add-user/add-user.component';
-import { CreateUserRequest } from './add-user/add-user.model';
 import { ModalService } from '../../../shared/components/modal/modal.service';
 
 @Component({
@@ -21,6 +20,7 @@ export class UsersComponent implements OnInit {
   errorMessage: string = '';
   isLoading: boolean = false;
   searchTerm: string = '';
+  managerList : EmployeeResponse[] = [];
   
   constructor(
     private auth: AuthService,
@@ -99,23 +99,28 @@ export class UsersComponent implements OnInit {
   }
 
   openAddUserModal() {
-    const modalRef = this.modalService.open(AddUserComponent, {
-      size: 'md', // Medium size modal
-      position: 'center', // Center position
-      theme: 'default', // Default theme
-      backdrop: true, // Show backdrop
-      closeOnBackdropClick: true, // Close on backdrop click
-      closeOnEscape: true, // Close on ESC key
-      data: {
-        onSuccess: (userData: CreateUserRequest) => {
-          console.log('User created successfully:', userData);
-          // Refresh the user list after successful creation
-          this.getAllEmployees();
-        },
-        onCancel: () => {
-          console.log('Add user modal cancelled');
+  this.auth.getAllManagers().subscribe({
+    next: (managers) => {
+      this.managerList = managers;
+      this.modalService.open(AddUserComponent, {
+        size: 'md',
+        position: 'center',
+        theme: 'default',
+        backdrop: true,
+        closeOnBackdropClick: true,
+        closeOnEscape: true,
+        data: {
+          managerList: this.managerList
         }
-      }
-    });
-  }
+      });
+    },
+    error: () => {
+      this.managerList = [];
+      this.modalService.open(AddUserComponent, {
+        data: { managerList: [] }
+      });
+    }
+  });
+}
+
 }
