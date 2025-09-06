@@ -1,0 +1,15 @@
+<div class="confirm-modal">
+  <div class="confirm-header" [class.danger]="data.danger">
+    <i class="fas" [class]="data.iconClass || 'fa-question-circle'"></i>
+    <h3>{{ data.title || 'Xác nhận' }}</h3>
+  </div>
+  <div class="confirm-body">
+    <p>{{ data.message || 'Bạn có chắc chắn muốn thực hiện thao tác này?' }}</p>
+  </div>
+  <div class="confirm-footer">
+    <button type="button" class="btn btn-cancel" (click)="onCancel()">{{ data.cancelText || 'No' }}</button>
+    <button type="button" class="btn" [class.btn-danger]="data.danger" (click)="onConfirm()">{{ data.confirmText || 'Yes' }}</button>
+  </div>
+</div>
+
+

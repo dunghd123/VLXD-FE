@@ -1,5 +1,7 @@
 .toast-container {
   position: fixed;
+  top: 20px;
+  right: 20px;
   z-index: 9999;
   pointer-events: none;
 }
@@ -40,38 +42,7 @@
   }
 }
 
-/* Vị trí toast */
-.toast-item[data-position="top-right"] {
-  top: 20px;
-  right: 20px;
-}
-
-.toast-item[data-position="top-left"] {
-  top: 20px;
-  left: 20px;
-}
-
-.toast-item[data-position="bottom-right"] {
-  bottom: 20px;
-  right: 20px;
-}
-
-.toast-item[data-position="bottom-left"] {
-  bottom: 20px;
-  left: 20px;
-}
-
-.toast-item[data-position="top-center"] {
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.toast-item[data-position="bottom-center"] {
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-}
+/* Vị trí toast - đã được cố định trong container */
 
 /* Nội dung toast */
 .toast-content {
@@ -132,55 +103,79 @@
 
 /* Màu sắc theo loại toast */
 .toast-success {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
   border-left: 4px solid #10b981;
+  border: 1px solid #a7f3d0;
 }
 
 .toast-success .toast-icon {
-  background: #d1fae5;
-  color: #10b981;
+  background: #10b981;
+  color: white;
 }
 
 .toast-success .toast-title {
   color: #065f46;
 }
 
+.toast-success .toast-message {
+  color: #047857;
+}
+
 .toast-error {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
   border-left: 4px solid #ef4444;
+  border: 1px solid #fecaca;
 }
 
 .toast-error .toast-icon {
-  background: #fee2e2;
-  color: #ef4444;
+  background: #ef4444;
+  color: white;
 }
 
 .toast-error .toast-title {
   color: #991b1b;
 }
 
+.toast-error .toast-message {
+  color: #b91c1c;
+}
+
 .toast-warning {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
   border-left: 4px solid #f59e0b;
+  border: 1px solid #fde68a;
 }
 
 .toast-warning .toast-icon {
-  background: #fef3c7;
-  color: #f59e0b;
+  background: #f59e0b;
+  color: white;
 }
 
 .toast-warning .toast-title {
   color: #92400e;
 }
 
+.toast-warning .toast-message {
+  color: #b45309;
+}
+
 .toast-info {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
   border-left: 4px solid #3b82f6;
+  border: 1px solid #bfdbfe;
 }
 
 .toast-info .toast-icon {
-  background: #dbeafe;
-  color: #3b82f6;
+  background: #3b82f6;
+  color: white;
 }
 
 .toast-info .toast-title {
   color: #1e40af;
+}
+
+.toast-info .toast-message {
+  color: #1d4ed8;
 }
 
 /* Thanh tiến trình */
@@ -210,15 +205,14 @@
 
 /* Responsive */
 @media (max-width: 480px) {
-  .toast-item {
-    min-width: 280px;
-    max-width: calc(100vw - 40px);
+  .toast-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
   }
   
-  .toast-item[data-position="top-center"],
-  .toast-item[data-position="bottom-center"] {
-    left: 20px;
-    right: 20px;
-    transform: none;
+  .toast-item {
+    min-width: 280px;
+    max-width: 100%;
   }
 }

@@ -1,0 +1,38 @@
+.confirm-modal {
+  background: #fff;
+  padding: 16px;
+}
+.confirm-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.confirm-header.danger {
+  color: #c0392b;
+}
+.confirm-body {
+  margin-bottom: 16px;
+}
+.confirm-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.btn {
+  padding: 8px 14px;
+  border: none;
+  background: #0069d9;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-cancel {
+  background: #bdc3c7;
+  color: #2c3e50;
+}
+.btn-danger {
+  background: #e74c3c;
+}
+
+

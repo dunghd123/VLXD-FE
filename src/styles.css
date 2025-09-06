@@ -4,14 +4,14 @@
 
 /* Modal backdrop - Angular CDK Overlay */
 .cdk-overlay-backdrop {
-  background: rgba(0, 0, 0, 0.6) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
   backdrop-filter: blur(4px);
   animation: fadeIn 0.2s ease-out;
 }
 
 /* Alternative backdrop class for better compatibility */
 .cdk-overlay-backdrop.modal-backdrop {
-  background: rgba(0, 0, 0, 0.6) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
   backdrop-filter: blur(4px);
 }
 
@@ -169,7 +169,7 @@ body.modal-open {
 
 /* Keep old classes for backward compatibility */
 .modal-backdrop {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(4px);
 }
 
@@ -197,7 +197,7 @@ body.modal-open {
 .cdk-overlay-backdrop,
 .cdk-overlay-backdrop.modal-backdrop,
 .cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
-  background: rgba(0, 0, 0, 0.6) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
   opacity: 1 !important;
   visibility: visible !important;
   display: block !important;

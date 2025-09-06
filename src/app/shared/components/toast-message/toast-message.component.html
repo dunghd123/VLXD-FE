@@ -2,7 +2,6 @@
   <div 
     *ngFor="let toast of toasts" 
     [class]="getToastClass(toast.type)"
-    [attr.data-position]="toast.position || 'top-right'"
     class="toast-item"
   >
     <div class="toast-content">

@@ -69,6 +69,13 @@ export class AuthService {
     );
   }
 
+  deleteUser(username: string): Observable<any> {
+    if (!this.isLoggedIn() || !this.isManager()) throw new Error('Access denied');
+    return this.retryWithTokenRefresh(() =>
+      this.http.delete(`${this.employeeUrl}/delete-user?username=${encodeURIComponent(username)}`)
+    );
+  }
+
   // ================= TOKEN ==================
   saveTokens(accessToken: string, refreshToken: string): void {
     localStorage.setItem('access_token', accessToken);

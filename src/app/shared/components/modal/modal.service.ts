@@ -37,7 +37,7 @@ export class ModalService {
     // Create overlay with configuration
     this.overlayRef = this.overlay.create({
       hasBackdrop: defaultConfig.backdrop,
-      backdropClass: 'cdk-overlay-backdrop modal-backdrop',
+      backdropClass: ['cdk-overlay-backdrop', 'modal-backdrop'],
       panelClass: this.getPanelClass(defaultConfig),
       scrollStrategy: this.overlay.scrollStrategies.block(),
       positionStrategy: this.getPositionStrategy(defaultConfig.position),
@@ -54,7 +54,7 @@ export class ModalService {
     }
 
     const injector = new PortalInjector(this.injector, new WeakMap([
-      [MODAL_DATA, { ...defaultConfig.data, modalConfig: defaultConfig }]
+      [MODAL_DATA, { ...(defaultConfig.data || {}), modalConfig: defaultConfig }]
     ]));
 
     const portal = new ComponentPortal(component, null, injector);

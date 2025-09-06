@@ -6,6 +6,8 @@ import { EmployeeResponse, UserResponse } from './user.model';
 import { StatusPipe } from '../../../shared/pipes/status.pipe';
 import { AddUserComponent } from './add-user/add-user.component';
 import { ModalService } from '../../../shared/components/modal/modal.service';
+import { ConfirmModalComponent } from '../../../shared/components/modal/confirm-modal/confirm-modal.component';
+import { ToastMessageService } from '../../../shared/services/toast-message.service';
 
 @Component({
   selector: 'app-manager-users',
@@ -24,7 +26,8 @@ export class UsersComponent implements OnInit {
   
   constructor(
     private auth: AuthService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private toast: ToastMessageService
   ){}
 
   ngOnInit(): void {
@@ -99,28 +102,67 @@ export class UsersComponent implements OnInit {
   }
 
   openAddUserModal() {
-  this.auth.getAllManagers().subscribe({
-    next: (managers) => {
-      this.managerList = managers;
-      this.modalService.open(AddUserComponent, {
-        size: 'md',
-        position: 'center',
-        theme: 'default',
-        backdrop: true,
-        closeOnBackdropClick: true,
-        closeOnEscape: true,
-        data: {
-          managerList: this.managerList
-        }
-      });
-    },
-    error: () => {
-      this.managerList = [];
-      this.modalService.open(AddUserComponent, {
-        data: { managerList: [] }
+    this.auth.getAllManagers().subscribe({
+      next: (managers) => {
+        this.managerList = managers;
+        this.modalService.open(AddUserComponent, {
+          size: 'md',
+          position: 'center',
+          theme: 'default',
+          backdrop: true,
+          closeOnBackdropClick: true,
+          closeOnEscape: true,
+          data: {
+            managerList: this.managerList
+          }
+        });
+      },
+      error: () => {
+        this.managerList = [];
+        this.modalService.open(AddUserComponent, {
+          data: { managerList: [] }
+        });
+      }
+    });
+  }
+  openDeleteUserModal(user: UserResponse) {
+    const modalRef = this.modalService.open(ConfirmModalComponent, {
+      size: 'sm',
+      position: 'center',
+      data: {
+        title: 'Xác nhận xóa',
+        message: `Bạn có chắc chắn muốn xóa người dùng "${user.fullName}" (username: ${user.userName})?`,
+        confirmText: 'Yes',
+        cancelText: 'No',
+        danger: true,
+        iconClass: 'fa-trash-alt'
+      }
+    });
+
+    // Listen to outputs
+    const instance: any = modalRef.instance;
+    if (instance && instance.confirm) {
+      instance.confirm.subscribe(() => {
+        this.deleteUser(user);
       });
     }
-  });
-}
+  }
 
+  private deleteUser(user: UserResponse) {
+    this.isLoading = true;
+    this.auth.deleteUser(String(user.userName)).subscribe({
+      next: () => {
+        this.toast.showSuccess('Thành công', 'Xóa người dùng thành công');
+        // Remove from arrays
+        this.employees = this.employees.filter(u => u.userName !== user.userName);
+        this.filteredEmployees = this.filteredEmployees.filter(u => u.userName !== user.userName);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.isLoading = false;
+        const message = err?.error?.message || err?.message || 'Không thể xóa người dùng';
+        this.toast.showError('Lỗi', message);
+      }
+    });
+  }
 }

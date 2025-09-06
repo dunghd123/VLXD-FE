@@ -83,8 +83,8 @@ export class AddUserComponent implements OnInit {
         this.submitting = false;
       },
       error: (error) => {
-        // this.toast.showError('Lỗi', error.error.message);
-        // // this.error = error?.error?.message || 'Có lỗi xảy ra khi tạo người dùng. Vui lòng thử lại.';
+        this.toast.showError('Lỗi', error.error.message);
+        // this.error = error?.error?.message || 'Có lỗi xảy ra khi tạo người dùng. Vui lòng thử lại.';
         this.submitting = false;
       }
     });
@@ -127,7 +127,7 @@ export class AddUserComponent implements OnInit {
   // Get maximum date for date of birth (18 years ago from today)
   getMaxDate(): string {
     const today = new Date();
-    const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+    const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     return maxDate.toISOString().split('T')[0];
   }
 }
