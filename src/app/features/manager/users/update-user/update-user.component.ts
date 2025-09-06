@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, HostListener, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { CreateUserRequest } from './add-user.model';
+import { UpdateUserRequest } from './update-user.model';
 import { MODAL_DATA } from '../../../../shared/components/modal/modal.token';
 import { ModalService } from '../../../../shared/components/modal/modal.service';
 import { AuthService } from '../../../../core/auth/services/auth.service';
@@ -9,17 +9,18 @@ import { ToastMessageService } from '../../../../shared/services/toast-message.s
 import { EmployeeResponse } from '../user.model';
 
 @Component({
-  selector: 'app-add-user',
+  selector: 'app-update-user',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './add-user.component.html',
-  styleUrls: ['./add-user.component.css']
+  templateUrl: './update-user.component.html',
+  styleUrls: ['./update-user.component.css']
 })
-export class AddUserComponent implements OnInit {
+export class UpdateUserComponent implements OnInit {
   managerList: EmployeeResponse[] = [];
   @ViewChild('form') form!: NgForm;
 
-  userModel: CreateUserRequest = {
+  userModel: UpdateUserRequest = {
+    id: 0,
     username: '',
     password: '',
     fullName: '',
@@ -43,14 +44,47 @@ export class AddUserComponent implements OnInit {
   ) {
     this.checkDeviceType();
     this.managerList= data.managerList
+
   }
 
   ngOnInit() {
-    // If data is passed from the modal, use it to pre-populate the form
     if (this.data && this.data.user) {
-      this.userModel = { ...this.data.user };
+      const user = this.data.user;
+      console.log('User data received:', user); // Debug log
+      
+      // Check if we have enough data, if not try to fetch from API
+      if (user.id && (!user.address || !user.dateOfBirth)) {
+        this.authService.getUserById(user.id).subscribe({
+          next: (userDetail: any) => {
+            console.log('User detail from API:', userDetail);
+            this.populateUserModel(userDetail);
+          },
+          error: (err: any) => {
+            console.warn('Could not fetch user detail, using available data:', err);
+            this.populateUserModel(user);
+          }
+        });
+      } else {
+        this.populateUserModel(user);
+      }
     }
+  }
+
+  private populateUserModel(user: any) {
+    this.userModel = {
+      id: user.id || 0,
+      username: user.userName || user.username || '',
+      password: '', 
+      fullName: user.fullName || '',
+      address: user.address || '',
+      phone: user.phone || user.phoneNum || '',
+      managerId: user.managerId || 0,
+      dateOfBirth: user.dateOfBirth || user.dob || '',
+      gender: (user.gender as 'MALE' | 'FEMALE' | 'OTHER') || 'MALE',
+      role: (user.role as 'EMPLOYEE' | 'MANAGER') || 'EMPLOYEE'
+    };
     
+    console.log('User model populated:', this.userModel); // Debug log
   }
 
   @HostListener('window:resize')
@@ -72,19 +106,24 @@ export class AddUserComponent implements OnInit {
     this.submitting = true;
     this.error = '';
 
-    this.authService.createEmployeeUser(this.userModel).subscribe({
+    // Prepare update data - remove password if empty
+    const updateData = { ...this.userModel };
+    if (!updateData.password || updateData.password.trim() === '') {
+      delete updateData.password;
+    }
+
+    this.authService.updateEmployeeUser(updateData).subscribe({
       next: (response) => {
-        this.toast.showSuccess('Thành công', response.message);
+        this.toast.showSuccess('Thành công', response.message || 'Cập nhật người dùng thành công');
         this.modalService.close();
 
         if (this.data && this.data.onSuccess) {
-          this.data.onSuccess(this.userModel);
+          this.data.onSuccess(updateData);
         }
         this.submitting = false;
       },
       error: (error) => {
-        this.toast.showError('Lỗi', error.error.message);
-        // this.error = error?.error?.message || 'Có lỗi xảy ra khi tạo người dùng. Vui lòng thử lại.';
+        this.toast.showError('Lỗi', error.error?.message || 'Có lỗi xảy ra khi cập nhật người dùng');
         this.submitting = false;
       }
     });

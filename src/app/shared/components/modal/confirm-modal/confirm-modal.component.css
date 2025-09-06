@@ -1,6 +1,7 @@
 .confirm-modal {
   background: #fff;
   padding: 16px;
+  border-radius: 16px;
 }
 .confirm-header {
   display: flex;
@@ -26,6 +27,9 @@
   color: #fff;
   border-radius: 4px;
   cursor: pointer;
+}
+.btn:hover {
+  opacity: 0.8;
 }
 .btn-cancel {
   background: #bdc3c7;

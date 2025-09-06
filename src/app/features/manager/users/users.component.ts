@@ -8,6 +8,7 @@ import { AddUserComponent } from './add-user/add-user.component';
 import { ModalService } from '../../../shared/components/modal/modal.service';
 import { ConfirmModalComponent } from '../../../shared/components/modal/confirm-modal/confirm-modal.component';
 import { ToastMessageService } from '../../../shared/services/toast-message.service';
+import { UpdateUserComponent } from './update-user/update-user.component';
 
 @Component({
   selector: 'app-manager-users',
@@ -146,6 +147,50 @@ export class UsersComponent implements OnInit {
         this.deleteUser(user);
       });
     }
+  }
+  openUpdateUserModal(user: UserResponse) {
+    this.auth.getAllManagers().subscribe({
+      next: (managers) => {
+        this.managerList = managers;
+        const modalRef = this.modalService.open(UpdateUserComponent, {
+          size: 'md',
+          position: 'center',
+          theme: 'default',
+          backdrop: true,
+          closeOnBackdropClick: true,
+          closeOnEscape: true,
+          data: {
+            user: user,
+            managerList: this.managerList,
+            onSuccess: (updatedUser: any) => {
+              // Refresh the user in the list
+              const index = this.employees.findIndex(u => u.userName === updatedUser.username);
+              if (index !== -1) {
+                this.employees[index] = { ...this.employees[index], ...updatedUser };
+                this.filterEmployees(); // Refresh filtered list
+              }
+            }
+          }
+        });
+      },
+      error: () => {
+        this.managerList = [];
+        this.modalService.open(UpdateUserComponent, {
+          data: { 
+            user: user,
+            managerList: [],
+            onSuccess: (updatedUser: any) => {
+              // Refresh the user in the list
+              const index = this.employees.findIndex(u => u.userName === updatedUser.username);
+              if (index !== -1) {
+                this.employees[index] = { ...this.employees[index], ...updatedUser };
+                this.filterEmployees(); // Refresh filtered list
+              }
+            }
+          }
+        });
+      }
+    });
   }
 
   private deleteUser(user: UserResponse) {

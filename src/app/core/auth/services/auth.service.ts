@@ -4,9 +4,9 @@ import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { LoginCredentials, TokenResponse, User, Role } from '../models/auth.models';
 import { EmployeeResponse, UserResponse } from '../../../features/manager/users/user.model';
-import { catchError, tap } from 'rxjs/operators';
 import { Observable as RxObservable } from 'rxjs';
 import { CreateUserRequest } from '../../../features/manager/users/add-user/add-user.model';
+import { UpdateUserRequest } from '../../../features/manager/users/update-user/update-user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +66,20 @@ export class AuthService {
     if (!this.isLoggedIn() || !this.isManager()) throw new Error('Access denied');
     return this.retryWithTokenRefresh(() =>
       this.http.post(`${this.userUrl}/add-new-user`, payload)
+    );
+  }
+
+  updateEmployeeUser(payload: UpdateUserRequest): RxObservable<any> {
+    if (!this.isLoggedIn() || !this.isManager()) throw new Error('Access denied');
+    return this.retryWithTokenRefresh(() =>
+      this.http.put(`${this.userUrl}/update-user`, payload)
+    );
+  }
+
+  getUserById(userId: number): Observable<any> {
+    if (!this.isLoggedIn() || !this.isManager()) throw new Error('Access denied');
+    return this.retryWithTokenRefresh(() =>
+      this.http.get(`${this.userUrl}/get-user-by-id/${userId}`)
     );
   }
 
