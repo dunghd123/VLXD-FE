@@ -7,7 +7,7 @@ export interface UpdateUserRequest {
   phone: string,
   managerId: number,
   dateOfBirth: string, // ISO yyyy-MM-dd
-  gender: 'MALE' | 'FEMALE' | 'OTHER',
+  gender: 'Nam' | 'Nữ' | 'Khác',
   role: 'EMPLOYEE' | 'MANAGER',
 };
 

@@ -69,19 +69,12 @@ export class AuthService {
     );
   }
 
-  updateEmployeeUser(payload: UpdateUserRequest): RxObservable<any> {
-    if (!this.isLoggedIn() || !this.isManager()) throw new Error('Access denied');
-    return this.retryWithTokenRefresh(() =>
-      this.http.put(`${this.userUrl}/update-user`, payload)
-    );
-  }
-
-  getUserById(userId: number): Observable<any> {
-    if (!this.isLoggedIn() || !this.isManager()) throw new Error('Access denied');
-    return this.retryWithTokenRefresh(() =>
-      this.http.get(`${this.userUrl}/get-user-by-id/${userId}`)
-    );
-  }
+ updateEmployeeUser(id: number, payload: UpdateUserRequest): RxObservable<any> {
+  if (!this.isLoggedIn() || !this.isManager()) throw new Error('Access denied');
+  return this.retryWithTokenRefresh(() =>
+    this.http.put(`${this.employeeUrl}/update-user/${id}`, payload)
+  );
+}
 
   deleteUser(username: string): Observable<any> {
     if (!this.isLoggedIn() || !this.isManager()) throw new Error('Access denied');

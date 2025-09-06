@@ -27,7 +27,7 @@ export class AddUserComponent implements OnInit {
     phone: '',
     managerId: 0,
     dateOfBirth: '',
-    gender: 'MALE',
+    gender: 'Nam',
     role: 'EMPLOYEE'
   };
 

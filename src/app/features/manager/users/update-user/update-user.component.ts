@@ -28,7 +28,7 @@ export class UpdateUserComponent implements OnInit {
     phone: '',
     managerId: 0,
     dateOfBirth: '',
-    gender: 'MALE',
+    gender: 'Nam',
     role: 'EMPLOYEE'
   };
 
@@ -50,26 +50,10 @@ export class UpdateUserComponent implements OnInit {
   ngOnInit() {
     if (this.data && this.data.user) {
       const user = this.data.user;
-      console.log('User data received:', user); // Debug log
-      
-      // Check if we have enough data, if not try to fetch from API
-      if (user.id && (!user.address || !user.dateOfBirth)) {
-        this.authService.getUserById(user.id).subscribe({
-          next: (userDetail: any) => {
-            console.log('User detail from API:', userDetail);
-            this.populateUserModel(userDetail);
-          },
-          error: (err: any) => {
-            console.warn('Could not fetch user detail, using available data:', err);
-            this.populateUserModel(user);
-          }
-        });
-      } else {
-        this.populateUserModel(user);
-      }
+      this.populateUserModel(user); 
     }
   }
-
+  //attach user data on modal
   private populateUserModel(user: any) {
     this.userModel = {
       id: user.id || 0,
@@ -80,11 +64,9 @@ export class UpdateUserComponent implements OnInit {
       phone: user.phone || user.phoneNum || '',
       managerId: user.managerId || 0,
       dateOfBirth: user.dateOfBirth || user.dob || '',
-      gender: (user.gender as 'MALE' | 'FEMALE' | 'OTHER') || 'MALE',
+      gender: (user.gender as 'Nam' | 'Nữ' | 'Khác') || 'Nam',
       role: (user.role as 'EMPLOYEE' | 'MANAGER') || 'EMPLOYEE'
     };
-    
-    console.log('User model populated:', this.userModel); // Debug log
   }
 
   @HostListener('window:resize')
@@ -112,7 +94,7 @@ export class UpdateUserComponent implements OnInit {
       delete updateData.password;
     }
 
-    this.authService.updateEmployeeUser(updateData).subscribe({
+    this.authService.updateEmployeeUser(this.userModel.id,updateData).subscribe({
       next: (response) => {
         this.toast.showSuccess('Thành công', response.message || 'Cập nhật người dùng thành công');
         this.modalService.close();
