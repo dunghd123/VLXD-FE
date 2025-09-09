@@ -1,0 +1,92 @@
+<div class="users-page">
+  <div class="page-header">
+    <h2>Quản lý khách hàng</h2>
+    <p>Quản lý danh sách khách hàng trong hệ thống</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>{{ errorMessage }}</span>
+    <button (click)="fetchCustomers()" class="btn-retry">
+      <i class="fas fa-redo"></i> Thử lại
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state">
+    <i class="fas fa-spinner fa-spin"></i>
+    <span>Đang tải dữ liệu...</span>
+  </div>
+
+  <div class="actions">
+    <button class="btn-primary" >
+      <i class="fas fa-plus"></i>
+      <span>Thêm người dùng mới</span>
+    </button>
+   
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input 
+        type="text" 
+        placeholder="Tìm kiếm khách hàng..." 
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()">
+    </div>
+  </div>
+
+  <div class="users-table" *ngIf="!isLoading && !errorMessage">
+    <div class="search-results-info" *ngIf="searchTerm.trim()">
+      <span>Tìm thấy {{ filteredCustomers.length }} khách hàng phù hợp với "{{ searchTerm }}"</span>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tên</th>
+          <th>SĐT</th>
+          <th>Địa chỉ</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of filteredCustomers">
+          <td>{{ c.name }}</td>
+          <td>{{ c.phone }}</td>
+          <td>{{ c.address }}</td>
+          <td>
+            <i class="fas fa-edit" ></i>
+            <i class="fas fa-trash-alt" (click)="openDeleteCustomerModal(c)"></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredCustomers.length === 0 && !isLoading && !errorMessage" class="empty-state">
+      <i class="fas fa-search"></i>
+      <p *ngIf="searchTerm.trim()">Không tìm thấy khách hàng nào phù hợp với "{{ searchTerm }}"</p>
+      <p *ngIf="!searchTerm.trim()">Không có khách hàng nào</p>
+    </div>
+
+    <div class="pagination">
+      <div class="page-size">
+        <label style="margin-right:8px;">Phân trang:</label>
+        <select [(ngModel)]="size" (ngModelChange)="setPageSize(size)">
+          <option [ngValue]="5">5</option>
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="20">20</option>
+          <option [ngValue]="50">50</option>
+        </select>
+      </div>
+      <div class="page-controls">
+        <button (click)="prevPage()" [disabled]="isLoading || page === 0">
+          <i class="fas fa-chevron-left"></i>  Trước
+        </button>
+        <span> Trang: {{ page + 1 }} / {{ totalPages || 1 }} (tổng: {{ totalElements }}) </span>
+        <button (click)="nextPage()" [disabled]="isLoading || (totalPages > 0 && page + 1 >= totalPages)">
+          Sau <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,15 @@
+@import url('../users/users.component.css');
+
+.pagination{
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #0f0f0f3d;
+}
+.pagination .page-size {
+    margin: 15px 10px;
+}
+.pagination .page-controls{
+    margin: 15px 10px;
+}
+
+

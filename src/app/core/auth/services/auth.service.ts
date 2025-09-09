@@ -154,6 +154,9 @@ export class AuthService {
       })
       .catch((error) => {
         console.error('Token refresh failed:', error);
+        // Clear tokens before logout to prevent infinite loops
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         this.logout();
         throw error;
       })
@@ -249,6 +252,20 @@ export class AuthService {
       return payload.exp < currentTime;
     } catch (error) {
       console.error('Error parsing token:', error);
+      return true;
+    }
+  }
+
+  isRefreshTokenExpired(): boolean {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) return true;
+
+    try {
+      const payload = JSON.parse(atob(refreshToken.split('.')[1]));
+      const currentTime = Date.now() / 1000;
+      return payload.exp < currentTime;
+    } catch (error) {
+      console.error('Error parsing refresh token:', error);
       return true;
     }
   }
