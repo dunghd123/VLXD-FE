@@ -9,7 +9,6 @@ export interface CreateCustomerRequest {
   name: string;
   phone: string;
   address?: string;
-  email?: string;
 }
 
 export interface UpdateCustomerRequest extends Partial<CreateCustomerRequest> {

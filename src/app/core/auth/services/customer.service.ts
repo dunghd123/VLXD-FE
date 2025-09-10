@@ -26,14 +26,14 @@ export class CustomerService {
   createCustomer(payload: CreateCustomerRequest): Observable<any> {
     if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
-      this.http.post(`${this.customerUrl}`, payload)
+      this.http.post(`${this.customerUrl}/add-new-customer`, payload)
     );
   }
 
   updateCustomer(id: number, payload: UpdateCustomerRequest): Observable<any> {
     if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
-      this.http.put(`${this.customerUrl}/${id}`, payload)
+      this.http.put(`${this.customerUrl}/update-customer/${id}`, payload)
     );
   }
 

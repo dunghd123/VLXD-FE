@@ -18,9 +18,9 @@
   </div>
 
   <div class="actions">
-    <button class="btn-primary" >
+    <button class="btn-primary" (click)="openAddCustomerModal()" >
       <i class="fas fa-plus"></i>
-      <span>Thêm người dùng mới</span>
+      <span>Thêm khách hàng mới</span>
     </button>
    
     <div class="search-box">
@@ -53,7 +53,7 @@
           <td>{{ c.phone }}</td>
           <td>{{ c.address }}</td>
           <td>
-            <i class="fas fa-edit" ></i>
+            <i class="fas fa-edit" (click)="openEditCustomerModal(c)" ></i>
             <i class="fas fa-trash-alt" (click)="openDeleteCustomerModal(c)"></i>
           </td>
         </tr>
@@ -68,7 +68,7 @@
 
     <div class="pagination">
       <div class="page-size">
-        <label style="margin-right:8px;">Phân trang:</label>
+        <label style="margin-right:8px;">Size:</label>
         <select [(ngModel)]="size" (ngModelChange)="setPageSize(size)">
           <option [ngValue]="5">5</option>
           <option [ngValue]="10">10</option>

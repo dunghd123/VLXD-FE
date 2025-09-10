@@ -1,0 +1,60 @@
+<div class="dialog" [class.mobile]="isMobile">
+  <div class="dialog-header">
+    <h3>Cập nhật khách hàng ID: {{ customerModel.id }}</h3>
+    <button type="button" class="close-btn" (click)="closeModal()" aria-label="Đóng" title="Đóng">×</button>
+  </div>
+
+  <form #form="ngForm" class="dialog-body" (ngSubmit)="onSubmit(form)" novalidate>
+    <div class="grid">
+
+      <!-- Full name -->
+      <label>
+        <span>Họ và tên <span class="required">*</span></span>
+        <input 
+          type="text" name="fullName" [(ngModel)]="customerModel.name"
+          #fullName="ngModel" required autocomplete="name"
+          placeholder="Nhập họ và tên"
+          [ngClass]="{'invalid': form.submitted && fullName.invalid}" />
+        <div *ngIf="form.submitted && fullName.errors" class="field-error">
+          <span *ngIf="fullName.errors?.['required']">Họ và tên là bắt buộc</span>
+        </div>
+      </label>
+
+      <!-- Address -->
+      <label>
+        <span>Địa chỉ <span class="required">*</span></span>
+        <input type="text" name="address" [(ngModel)]="customerModel.address"
+                #address="ngModel" required autocomplete="street-address"
+                placeholder="Nhập địa chỉ"
+                [ngClass]="{'invalid': form.submitted && address.invalid}" />
+        <div *ngIf="form.submitted && address.errors" class="field-error">
+          <span *ngIf="address.errors?.['required']">Địa chỉ là bắt buộc</span>
+        </div>
+      </label>
+
+      <!-- Phone -->
+      <label>
+        <span>Số điện thoại <span class="required">*</span></span>
+        <input type="text" name="phone" [(ngModel)]="customerModel.phone"
+                #phone="ngModel" required autocomplete="tel"
+                placeholder="Nhập số điện thoại"
+                [ngClass]="{'invalid': form.submitted && phone.invalid}" />
+        <div *ngIf="form.submitted && phone.errors" class="field-error">
+          <span *ngIf="phone.errors?.['required']">Số điện thoại là bắt buộc</span>
+        </div>
+      </label>
+    </div>
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button type="button" (click)="onCancel()" class="btn-cancel">Hủy</button>
+      <button type="submit" class="btn-submit">
+        <span *ngIf="!submitting">Lưu</span>
+        <span *ngIf="submitting">Đang lưu...</span>
+      </button>
+    </div>
+
+    <!-- General error -->
+    <div class="error" *ngIf="error" role="alert">{{ error }}</div>
+  </form>
+</div>

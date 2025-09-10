@@ -7,6 +7,8 @@ import { ToastMessageService } from '../../../shared/services/toast-message.serv
 import { ManagerCustomerResponse } from './customers.model';
 import { CustomerService } from '../../../core/auth/services/customer.service';
 import { PagedResponse } from '../../../shared/models/pagnition.model';
+import { AddCustomerComponent } from './add-customer/add-customer.component';
+import { UpdateCustomerComponent } from './update-customer/update-customer.component';
 
 @Component({
   selector: 'app-manager-customers',
@@ -112,6 +114,23 @@ export class CustomersComponent implements OnInit {
 
   getStatusBadgeClass(status: any): string {
     return this.isStatusActive(status) ? 'status-active' : 'status-inactive';
+  }
+
+  openAddCustomerModal(): void {
+    this.modalService.open(AddCustomerComponent, {
+      size: 'md',
+      position: 'center',
+      data: {}
+    });
+  }
+  openEditCustomerModal(customer: ManagerCustomerResponse): void {
+    console.log(customer);
+    
+    this.modalService.open(UpdateCustomerComponent, {
+      size: 'md',
+      position: 'center',
+      data: { customer }
+    });
   }
 
   openDeleteCustomerModal(customer: ManagerCustomerResponse): void {
