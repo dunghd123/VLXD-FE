@@ -1,34 +1,27 @@
 import { Component, Inject, OnInit, HostListener, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import { CreateUserRequest } from './add-user.model';
 import { MODAL_DATA } from '../../../../shared/components/modal/modal.token';
 import { ModalService } from '../../../../shared/components/modal/modal.service';
-import { AuthService } from '../../../../core/auth/services/auth.service';
 import { ToastMessageService } from '../../../../shared/services/toast-message.service';
-import { EmployeeResponse } from '../user.model';
+import { UpdateSupplierRequest } from '../suppliers.model';
+import { SupplierService } from '../../../../core/auth/services/supplier.service';
 
 @Component({
-  selector: 'app-add-user',
+  selector: 'app-update-supplier',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './add-user.component.html',
-  styleUrls: ['./add-user.component.css']
+  templateUrl: './update-supplier.component.html',
+  styleUrls: ['./update-supplier.component.css']
 })
-export class AddUserComponent implements OnInit {
-  managerList: EmployeeResponse[] = [];
+export class UpdateSupplierComponent implements OnInit {
   @ViewChild('form') form!: NgForm;
 
-  userModel: CreateUserRequest = {
-    username: '',
-    password: '',
-    fullName: '',
+  supplierModel: UpdateSupplierRequest = {
+    id: 0,
+    name: '',
     address: '',
     phone: '',
-    managerId: 0,
-    dateOfBirth: '',
-    gender: 'Nam',
-    role: 'EMPLOYEE'
   };
 
   submitting = false;
@@ -38,19 +31,27 @@ export class AddUserComponent implements OnInit {
   constructor(
     @Inject(MODAL_DATA) public data: any,
     private modalService: ModalService,
-    private authService: AuthService,
     private toast: ToastMessageService,
+    private supplierService: SupplierService,
   ) {
     this.checkDeviceType();
-    this.managerList= data.managerList
   }
 
   ngOnInit() {
-    // If data is passed from the modal, use it to pre-populate the form
-    if (this.data && this.data.user) {
-      this.userModel = { ...this.data.user };
+    if (this.data && this.data.supplier) {
+      this.supplierModel = { ...this.data.supplier };
+      this.populateSupplierModel(this.supplierModel);
+      
     }
     
+  }
+   private populateSupplierModel(supplier: any) {
+    this.supplierModel = {
+      id: supplier.id || 0,
+      address: supplier.address || '',
+      phone: supplier.phone || supplier.phoneNum || '',
+      name: supplier.name || '',
+    };
   }
 
   @HostListener('window:resize')
@@ -72,34 +73,22 @@ export class AddUserComponent implements OnInit {
     this.submitting = true;
     this.error = '';
 
-    this.authService.createEmployeeUser(this.userModel).subscribe({
+    this.supplierService.updateSupplier(this.supplierModel.id,this.supplierModel).subscribe({
       next: (response) => {
         this.toast.showSuccess('Thành công', response.message);
         this.modalService.close();
 
         if (this.data && this.data.onSuccess) {
-          this.data.onSuccess(this.userModel);
+          this.data.onSuccess(this.supplierModel);
         }
         this.submitting = false;
       },
       error: (error) => {
-        const err = error.error; 
-        if (err && typeof err === 'object') {
-          const messages = Object.values(err).join('\n');
-          this.toast.showError('Lỗi', messages);
-        } else {
-          this.toast.showError('Lỗi', 'Có lỗi xảy ra');
-        }
+        this.toast.showError('Lỗi', error.error.message);
         this.submitting = false;
       }
     });
   }
-  onRoleChange() {
-    if (this.userModel.role === 'MANAGER') {
-      this.userModel.managerId = 0;
-    }
-  }
-
 
   onCancel() {
     this.modalService.close();
@@ -120,20 +109,13 @@ export class AddUserComponent implements OnInit {
   }
 
   // Handle enter key press on form
-@HostListener('document:keydown.enter', ['$event'])
+  @HostListener('document:keydown.enter', ['$event'])
   onEnterKey(event: KeyboardEvent) {
     event.preventDefault();
 
     if (!this.submitting && this.form && this.form.valid) {
       this.onSubmit(this.form);
     }
-  }
-
-  // Get maximum date for date of birth (18 years ago from today)
-  getMaxDate(): string {
-    const today = new Date();
-    const maxDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    return maxDate.toISOString().split('T')[0];
   }
 }
 

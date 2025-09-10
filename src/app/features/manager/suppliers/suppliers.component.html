@@ -18,9 +18,9 @@
   </div>
 
   <div class="actions">
-    <button class="btn-primary" >
+    <button class="btn-primary" (click)="openAddSupplierModal()" >
       <i class="fas fa-plus"></i>
-      <span>Thêm người dùng mới</span>
+      <span>Thêm nhà cung cấp mới</span>
     </button>
 
     <div class="search-box">
@@ -41,7 +41,7 @@
     <table>
       <thead>
         <tr>
-          <th>Tên</th>
+          <th>Tên nhà cung cấp</th>
           <th>SĐT</th>
           <th>Địa chỉ</th>
           <th>Thao tác</th>
@@ -53,7 +53,7 @@
           <td>{{ s.phone }}</td>
           <td>{{ s.address }}</td>
           <td>
-            <i class="fas fa-edit" ></i>
+            <i class="fas fa-edit"  (click)="openEditSupplierModal(s)"></i>
             <i class="fas fa-trash-alt" (click)="openDeleteSupplierModal(s)"></i>
           </td>
         </tr>

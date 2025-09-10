@@ -120,16 +120,23 @@ export class CustomersComponent implements OnInit {
     this.modalService.open(AddCustomerComponent, {
       size: 'md',
       position: 'center',
-      data: {}
+      data: {
+        onSuccess: () => {
+          this.fetchCustomers(0, this.size);
+        }
+      }
     });
   }
   openEditCustomerModal(customer: ManagerCustomerResponse): void {
-    console.log(customer);
-    
     this.modalService.open(UpdateCustomerComponent, {
       size: 'md',
       position: 'center',
-      data: { customer }
+      data: { 
+        customer: customer,
+        onSuccess: () => {
+          this.fetchCustomers(this.page, this.size);
+        }
+       }
     });
   }
 

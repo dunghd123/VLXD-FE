@@ -24,29 +24,24 @@ export class SupplierService {
     );
   }
 
-  /**
-   * T o m t nh  cung c p m i.
-   * @param payload Th ng tin nh p v o.
-   * @returns Observable tr  v  khi th nh c ng hay b i.
-   */
   createSupplier(payload: CreateSupplierRequest): Observable<any> {
     if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
-      this.http.post(`${this.supplierUrl}`, payload)
+      this.http.post(`${this.supplierUrl}/add-supplier`, payload)
     );
   }
 
   updateSupplier(id: number, payload: UpdateSupplierRequest): Observable<any> {
     if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
-      this.http.put(`${this.supplierUrl}/${id}`, payload)
+      this.http.put(`${this.supplierUrl}/update-supplier/${id}`, payload)
     );
   }
 
   deleteSupplier(id: number): Observable<any> {
     if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
-      this.http.delete(`${this.supplierUrl}/${id}`)
+      this.http.delete(`${this.supplierUrl}/delete-supplier/${id}`)
     );
   }
 }

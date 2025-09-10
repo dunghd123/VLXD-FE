@@ -7,6 +7,8 @@ import { ToastMessageService } from '../../../shared/services/toast-message.serv
 import { ManagerSupplierResponse } from './suppliers.model';
 import { SupplierService } from '../../../core/auth/services/supplier.service';
 import { PagedResponse } from '../../../shared/models/pagnition.model';
+import { AddSupplierComponent } from './add-supplier/add-supplier.component';
+import { UpdateSupplierComponent } from './update-supplier/update-supplier.component';
 
 @Component({
   selector: 'app-manager-suppliers',
@@ -112,7 +114,27 @@ export class SuppliersComponent implements OnInit {
   getStatusBadgeClass(status: any): string {
     return this.isStatusActive(status) ? 'status-active' : 'status-inactive';
   }
-
+  openAddSupplierModal(): void {
+    this.modalService.open(AddSupplierComponent, { 
+      size: 'md', 
+      position: 'center', 
+      data: {
+        onSuccess: () => {
+          this.fetchSuppliers(0, this.size);
+        }
+      } });
+  }
+  openEditSupplierModal(supplier: ManagerSupplierResponse): void {
+    this.modalService.open(UpdateSupplierComponent, { 
+      size: 'md', 
+      position: 'center', 
+      data: { 
+        supplier: supplier,
+        onSuccess: () => {
+          this.fetchSuppliers(this.page, this.size);
+        } 
+      }});
+  }
   openDeleteSupplierModal(supplier: ManagerSupplierResponse): void {
     const modalRef = this.modalService.open(ConfirmModalComponent, {
       size: 'sm',

@@ -73,7 +73,13 @@ export class AddCustomerComponent implements OnInit {
         this.submitting = false;
       },
       error: (error) => {
-        this.toast.showError('Lỗi', error.error.message);
+        const err = error.error;
+        if (err && typeof err === 'object') {
+          const messages = Object.values(err).join('\n');
+          this.toast.showError('Lỗi', messages);
+        } else {
+          this.toast.showError('Lỗi', 'Có lỗi xảy ra');
+        }
         this.submitting = false;
       }
     });

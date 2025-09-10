@@ -9,7 +9,6 @@ export interface CreateSupplierRequest {
   name: string;
   phone: string;
   address?: string;
-  email?: string;
 }
 
 export interface UpdateSupplierRequest extends Partial<CreateSupplierRequest> {
