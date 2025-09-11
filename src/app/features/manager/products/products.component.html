@@ -1,4 +1,4 @@
-<div class="products-page">
+<div class="users-page">
   <div class="page-header">
     <h2>Quản lý sản phẩm</h2>
     <p>Thêm, sửa, xóa và quản lý danh sách sản phẩm trong hệ thống</p>
@@ -11,87 +11,66 @@
     </button>
     <div class="search-box">
       <i class="fas fa-search"></i>
-      <input type="text" placeholder="Tìm kiếm sản phẩm...">
+      <input 
+        type="text" 
+        placeholder="Tìm kiếm sản phẩm..." 
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()">
     </div>
   </div>
   
-  <div class="products-grid">
-    <div class="product-card">
-      <div class="product-image">
-        <i class="fas fa-box"></i>
-      </div>
-      <div class="product-info">
-        <h3>Xi măng Hà Tiên</h3>
-        <p class="product-category">Vật liệu xây dựng</p>
-        <p class="product-price">85.000 VNĐ</p>
-        <p class="product-stock">Còn lại: 150 bao</p>
-      </div>
-      <div class="product-actions">
-        <button class="btn-edit">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn-delete">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
+  <div class="users-table" *ngIf="!isLoading && !errorMessage">
+    <div class="search-results-info" *ngIf="searchTerm.trim()">
+      <span>Tìm thấy {{ filteredProducts.length }} sản phẩm phù hợp với "{{ searchTerm }}"</span>
     </div>
-    
-    <div class="product-card">
-      <div class="product-image">
-        <i class="fas fa-box"></i>
-      </div>
-      <div class="product-info">
-        <h3>Gạch ốp tường</h3>
-        <p class="product-category">Vật liệu trang trí</p>
-        <p class="product-price">120.000 VNĐ</p>
-        <p class="product-stock">Còn lại: 80 m²</p>
-      </div>
-      <div class="product-actions">
-        <button class="btn-edit">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn-delete">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tên sản phẩm</th>
+          <th>Mô tả</th>
+          <th>Đơn vị đo</th>
+          <th>Loại sản phẩm</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of filteredProducts">
+          <td>{{ c.name }}</td>
+          <td>{{ c.description }}</td>
+          <td>{{ c.unitMeasure }}</td>
+          <td>{{ c.cateName }}</td>
+          <td>
+            <i class="fas fa-edit" ></i>
+            <i class="fas fa-trash-alt"></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredProducts.length === 0 && !isLoading && !errorMessage" class="empty-state">
+      <i class="fas fa-search"></i>
+      <p *ngIf="searchTerm.trim()">Không tìm thấy sản phẩm nào phù hợp với "{{ searchTerm }}"</p>
+      <p *ngIf="!searchTerm.trim()">Không có sản phẩm</p>
     </div>
-    
-    <div class="product-card">
-      <div class="product-image">
-        <i class="fas fa-box"></i>
+
+    <div class="pagination">
+      <div class="page-size">
+        <label style="margin-right:8px;">Size:</label>
+        <select [(ngModel)]="size" (ngModelChange)="setPageSize(size)">
+          <option [ngValue]="5">5</option>
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="20">20</option>
+          <option [ngValue]="50">50</option>
+        </select>
       </div>
-      <div class="product-info">
-        <h3>Thép xây dựng</h3>
-        <p class="product-category">Vật liệu kết cấu</p>
-        <p class="product-price">15.500 VNĐ/kg</p>
-        <p class="product-stock">Còn lại: 2.500 kg</p>
-      </div>
-      <div class="product-actions">
-        <button class="btn-edit">
-          <i class="fas fa-edit"></i>
+      <div class="page-controls">
+        <button (click)="prevPage()" [disabled]="isLoading || page === 0">
+          <i class="fas fa-chevron-left"></i>  Trước
         </button>
-        <button class="btn-delete">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
-    </div>
-    
-    <div class="product-card">
-      <div class="product-image">
-        <i class="fas fa-box"></i>
-      </div>
-      <div class="product-info">
-        <h3>Cát xây dựng</h3>
-        <p class="product-category">Vật liệu cơ bản</p>
-        <p class="product-price">180.000 VNĐ/m³</p>
-        <p class="product-stock">Còn lại: 50 m³</p>
-      </div>
-      <div class="product-actions">
-        <button class="btn-edit">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn-delete">
-          <i class="fas fa-trash"></i>
+        <span> Trang: {{ page + 1 }} / {{ totalPages || 1 }} (tổng: {{ totalElements }}) </span>
+        <button (click)="nextPage()" [disabled]="isLoading || (totalPages > 0 && page + 1 >= totalPages)">
+          Sau <i class="fas fa-chevron-right"></i>
         </button>
       </div>
     </div>

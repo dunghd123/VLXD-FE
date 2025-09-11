@@ -1,93 +1,72 @@
-<div class="categories-page">
+<div class="users-page">
   <div class="page-header">
     <h2>Quản lý danh mục</h2>
     <p>Thêm, sửa, xóa và quản lý danh mục sản phẩm</p>
   </div>
   
   <div class="actions">
-    <button class="btn-primary">
+    <button class="btn-primary" (click)="openAddCategoryModal()">
       <i class="fas fa-plus"></i>
       <span>Thêm danh mục mới</span>
     </button>
     <div class="search-box">
       <i class="fas fa-search"></i>
-      <input type="text" placeholder="Tìm kiếm danh mục...">
+      <input 
+        type="text" 
+        placeholder="Tìm kiếm danh mục..." 
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()">
     </div>
   </div>
   
-  <div class="categories-grid">
-    <div class="category-card">
-      <div class="category-icon">
-        <i class="fas fa-hammer"></i>
-      </div>
-      <div class="category-info">
-        <h3>Vật liệu xây dựng</h3>
-        <p class="category-count">25 sản phẩm</p>
-        <p class="category-description">Xi măng, gạch, cát, đá...</p>
-      </div>
-      <div class="category-actions">
-        <button class="btn-edit">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn-delete">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
+    <div class="users-table" *ngIf="!isLoading && !errorMessage">
+    <div class="search-results-info" *ngIf="searchTerm.trim()">
+      <span>Tìm thấy {{ filteredCategories.length }} danh mục phù hợp với "{{ searchTerm }}"</span>
     </div>
-    
-    <div class="category-card">
-      <div class="category-icon">
-        <i class="fas fa-paint-brush"></i>
-      </div>
-      <div class="category-info">
-        <h3>Vật liệu trang trí</h3>
-        <p class="category-count">18 sản phẩm</p>
-        <p class="category-description">Gạch ốp, sơn, vữa...</p>
-      </div>
-      <div class="category-actions">
-        <button class="btn-edit">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn-delete">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tên danh mục</th>
+          <th>Mô tả</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of filteredCategories">
+          <td>{{ c.name }}</td>
+          <td>{{ c.description }}</td>
+          <td>
+            <i class="fas fa-edit" (click)="openEditCategoryModal(c)"  ></i>
+            <i class="fas fa-trash-alt" (click)="openDeleteCategoryModal(c)"></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredCategories.length === 0 && !isLoading && !errorMessage" class="empty-state">
+      <i class="fas fa-search"></i>
+      <p *ngIf="searchTerm.trim()">Không tìm thấy danh mục nào phù hợp với "{{ searchTerm }}"</p>
+      <p *ngIf="!searchTerm.trim()">Không có danh mục</p>
     </div>
-    
-    <div class="category-card">
-      <div class="category-icon">
-        <i class="fas fa-cogs"></i>
+
+    <div class="pagination">
+      <div class="page-size">
+        <label style="margin-right:8px;">Size:</label>
+        <select [(ngModel)]="size" (ngModelChange)="setPageSize(size)">
+          <option [ngValue]="5">5</option>
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="20">20</option>
+          <option [ngValue]="50">50</option>
+        </select>
       </div>
-      <div class="category-info">
-        <h3>Thiết bị điện</h3>
-        <p class="category-count">32 sản phẩm</p>
-        <p class="category-description">Đèn, ổ cắm, công tắc...</p>
-      </div>
-      <div class="category-actions">
-        <button class="btn-edit">
-          <i class="fas fa-edit"></i>
+      <div class="page-controls">
+        <button (click)="prevPage()" [disabled]="isLoading || page === 0">
+          <i class="fas fa-chevron-left"></i>  Trước
         </button>
-        <button class="btn-delete">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
-    </div>
-    
-    <div class="category-card">
-      <div class="category-icon">
-        <i class="fas fa-tools"></i>
-      </div>
-      <div class="category-info">
-        <h3>Dụng cụ</h3>
-        <p class="category-count">45 sản phẩm</p>
-        <p class="category-description">Búa, kìm, tua vít...</p>
-      </div>
-      <div class="category-actions">
-        <button class="btn-edit">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn-delete">
-          <i class="fas fa-trash"></i>
+        <span> Trang: {{ page + 1 }} / {{ totalPages || 1 }} (tổng: {{ totalElements }}) </span>
+        <button (click)="nextPage()" [disabled]="isLoading || (totalPages > 0 && page + 1 >= totalPages)">
+          Sau <i class="fas fa-chevron-right"></i>
         </button>
       </div>
     </div>
