@@ -7,6 +7,8 @@ import { ModalService } from '../../../shared/components/modal/modal.service';
 import { ToastMessageService } from '../../../shared/services/toast-message.service';
 import { PagedResponse } from '../../../shared/models/pagnition.model';
 import { ConfirmModalComponent } from '../../../shared/components/modal/confirm-modal/confirm-modal.component';
+import { AddProductComponent } from './add-product/add-product.component';
+import { UpdateProductComponent } from './update-product/update-product.component';
 
 @Component({
   selector: 'app-manager-products',
@@ -104,31 +106,31 @@ export class ProductsComponent {
       );
     }
   
-    // openAddCustomerModal(): void {
-    //   this.modalService.open(AddCustomerComponent, {
-    //     size: 'md',
-    //     position: 'center',
-    //     data: {
-    //       onSuccess: () => {
-    //         this.fetchProducts(0, this.size);
-    //       }
-    //     }
-    //   });
-    // }
-    // openEditCustomerModal(customer: ManagerCustomerResponse): void {
-    //   this.modalService.open(UpdateCustomerComponent, {
-    //     size: 'md',
-    //     position: 'center',
-    //     data: { 
-    //       customer: customer,
-    //       onSuccess: () => {
-    //         this.fetchProducts(this.page, this.size);
-    //       }
-    //      }
-    //   });
-    // }
+    openAddProductModal(): void {
+      this.modalService.open(AddProductComponent, {
+        size: 'md',
+        position: 'center',
+        data: {
+          onSuccess: () => {
+            this.fetchProducts(0, this.size);
+          }
+        }
+      });
+    }
+    openEditProductModal(product: ProductResponse ): void {
+      this.modalService.open(UpdateProductComponent, {
+        size: 'md',
+        position: 'center',
+        data: { 
+          product: product,
+          onSuccess: () => {
+            this.fetchProducts(this.page, this.size);
+          }
+         }
+      });
+    }
   
-    openDeleteProductrModal(product: ProductResponse ): void {
+    openDeleteProductModal(product: ProductResponse ): void {
       const modalRef = this.modalService.open(ConfirmModalComponent, {
         size: 'sm',
         position: 'center',

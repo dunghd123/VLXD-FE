@@ -14,7 +14,7 @@
           placeholder="Nhập tên danh mục"
           [ngClass]="{'invalid': form.submitted && cateName.invalid}" />
         <div *ngIf="form.submitted && cateName.errors" class="field-error">
-          <span *ngIf="cateName.errors?.['required']">Họ và tên là bắt buộc</span>
+          <span *ngIf="cateName.errors?.['required']">Tên danh mục là bắt buộc</span>
         </div>
       </label>
       <label>

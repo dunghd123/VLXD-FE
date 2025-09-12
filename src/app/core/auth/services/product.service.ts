@@ -27,21 +27,21 @@ export class ProductService {
   createProduct(payload: CreateProductRequest): Observable<any> {
     if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
-      this.http.post(`${this.productUrl}/add-new-customer`, payload)
+      this.http.post(`${this.productUrl}/add-product`, payload)
     );
   }
 
   updateProduct(id: number, payload: UpdateProductRequest): Observable<any> {
     if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
-      this.http.put(`${this.productUrl}/update-customer/${id}`, payload)
+      this.http.put(`${this.productUrl}/update-product/${id}`, payload)
     );
   }
 
   deleteProduct(id: number): Observable<any> {
     if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
-      this.http.delete(`${this.productUrl}/delete-customer/${id}`)
+      this.http.delete(`${this.productUrl}/delete-product/${id}`)
     );
   }
 }

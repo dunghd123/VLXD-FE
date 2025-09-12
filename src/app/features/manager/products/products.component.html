@@ -5,7 +5,7 @@
   </div>
   
   <div class="actions">
-    <button class="btn-primary">
+    <button class="btn-primary" (click)="openAddProductModal()">
       <i class="fas fa-plus"></i>
       <span>Thêm sản phẩm mới</span>
     </button>
@@ -41,8 +41,8 @@
           <td>{{ c.unitMeasure }}</td>
           <td>{{ c.cateName }}</td>
           <td>
-            <i class="fas fa-edit" ></i>
-            <i class="fas fa-trash-alt"></i>
+            <i class="fas fa-edit"  (click)="openEditProductModal(c)"></i>
+            <i class="fas fa-trash-alt" (click)="openDeleteProductModal(c)"></i>
           </td>
         </tr>
       </tbody>

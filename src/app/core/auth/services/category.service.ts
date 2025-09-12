@@ -23,6 +23,11 @@ export class CategoryService {
     );
   }
 
+  getListCategories(): Observable<CategoryResponse[]> {
+    if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
+    return this.http.get<CategoryResponse[]>(`${this.categoryUrl}/getListCategory`);
+  }
+
   createCategory(payload: CreateCategoryRequest): Observable<any> {
     if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>

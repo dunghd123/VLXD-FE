@@ -1,0 +1,67 @@
+<div class="dialog" [class.mobile]="isMobile">
+  <div class="dialog-header">
+    <h3>Thêm sản phẩm mới</h3>
+    <button type="button" class="close-btn" (click)="closeModal()" aria-label="Đóng" title="Đóng">×</button>
+  </div>
+
+  <form #form="ngForm" class="dialog-body" (ngSubmit)="onSubmit(form)" novalidate>
+    <div class="grid">
+      <label>
+        <span>Tên sản phẩm <span class="required">*</span></span>
+        <input 
+          type="text" name="cateName" [(ngModel)]="productModel.name"
+          #cateName="ngModel" required autocomplete="name"
+          placeholder="Nhập tên sản phẩm"
+          [ngClass]="{'invalid': form.submitted && cateName.invalid}" />
+        <div *ngIf="form.submitted && cateName.errors" class="field-error">
+          <span *ngIf="cateName.errors?.['required']">là bắt buộc</span>
+        </div>
+      </label>
+      <label>
+        <span>Mô tả <span class="required">*</span></span>
+        <input type="text" name="description" [(ngModel)]="productModel.description"
+                #description="ngModel" required autocomplete="description"
+                placeholder="Nhập mô tả"
+                [ngClass]="{'invalid': form.submitted && description.invalid}" />
+        <div *ngIf="form.submitted && description.errors" class="field-error">
+          <span *ngIf="description.errors?.['required']">Mô tả là bắt buộc</span>
+        </div>
+      </label>
+      <label>
+        <span>Đơn vị đo<span class="required">*</span></span>
+        <input type="text" name="unitMeasure" [(ngModel)]="productModel.unitMeasure"
+                #unitMeasure="ngModel" required autocomplete="unitMeasure"
+                placeholder="Nhập đơn vị đo"
+                [ngClass]="{'invalid': form.submitted && unitMeasure.invalid}" />
+        <div *ngIf="form.submitted && unitMeasure.errors" class="field-error">
+          <span *ngIf="unitMeasure.errors?.['required']">Đơn vị đo là bắt buộc</span>
+        </div>
+      </label>
+      <label>
+          <span>Loại vật liệu <span class="required">*</span></span>
+          <select name="cateId" [(ngModel)]="productModel.cateId"
+                  #cateId="ngModel" [ngClass]="{'invalid': form.submitted && cateId.invalid}">
+            <option value="" disabled selected>chọn loại vật liệu</option>
+            <option *ngFor="let category of categoryList" [value]="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+          <div *ngIf="form.submitted && cateId.errors" class="field-error">
+            <span *ngIf="cateId.errors?.['required']">Loại vật liệu là bắt buộc</span>
+          </div>
+        </label>
+    </div>
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button type="button" (click)="onCancel()" class="btn-cancel">Hủy</button>
+      <button type="submit" class="btn-submit">
+        <span *ngIf="!submitting">Lưu</span>
+        <span *ngIf="submitting">Đang lưu...</span>
+      </button>
+    </div>
+
+    <!-- General error -->
+    <div class="error" *ngIf="error" role="alert">{{ error }}</div>
+  </form>
+</div>
