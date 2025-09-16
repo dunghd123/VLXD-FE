@@ -19,6 +19,7 @@ import { CustomersComponent as EmployeeCustomersComponent } from './features/emp
 import { OrdersComponent as EmployeeOrdersComponent } from './features/employee/orders/orders.component';
 import { InputOrdersComponent } from './features/employee/input-orders/input-orders.component';
 import { OutputOrdersComponent } from './features/employee/output-orders/output-orders.component';
+import { ProductPriceHistoryComponent } from './features/manager/product-price-history/price-history.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -72,6 +73,12 @@ export const routes: Routes = [
       { 
         path: 'reports', 
         component: ReportsComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [Role.MANAGER] }
+      },
+      {
+        path: 'product-price-history',
+        component: ProductPriceHistoryComponent,
         canActivate: [RoleGuard],
         data: { roles: [Role.MANAGER] }
       }

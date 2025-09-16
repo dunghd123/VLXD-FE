@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { PagedResponse } from '../../../shared/models/pagnition.model';
-import { CategoryResponse, CreateCategoryRequest, UpdateCategoryRequest } from '../../../features/manager/categories/categories.model';
 import { CreateProductRequest, ProductResponse, UpdateProductRequest } from '../../../features/manager/products/products.model';
 
 @Injectable({
