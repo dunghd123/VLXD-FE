@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../../core/auth/services/auth.service';
-import { PriceFilterRequest, PriceResponse, PriceFilterResponse } from '../../../features/manager/product-price-history/price-history.model';
+import { AddPriceRequest, PriceFilterRequest, PriceResponse } from '../../../features/manager/product-price-history/price-history.model';
 import { PagedResponse } from '../../../shared/models/pagnition.model';
 
 @Injectable({
@@ -75,12 +75,12 @@ export class PriceHistoryService {
     );
   }
 
-  createPrice(price: Partial<PriceResponse>): Observable<any> {
+  createPrice(addPriceRequest: AddPriceRequest): Observable<any> {
     if (!this.authService.isLoggedIn() || !this.authService.isManager()) {
       throw new Error('Access denied');
     }
     return this.authService.retryWithTokenRefresh(() =>
-      this.http.post(`${this.priceUrl}/create`, price)
+      this.http.post(`${this.priceUrl}/create-new-price`, addPriceRequest)
     );
   }
 

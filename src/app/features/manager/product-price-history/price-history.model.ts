@@ -18,13 +18,8 @@ export interface PriceFilterRequest {
   sizeFilter: number;
   priceTypeFilter?: string;
 }
-
-export interface PriceFilterResponse {
-  content: PriceResponse[];
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-  first: boolean;
-  last: boolean;
+export interface AddPriceRequest {
+ productId: number;
+ invoiceType: string;
+ price: number;
 }

@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PriceResponse, PriceFilterRequest, PriceFilterResponse } from './price-history.model';
+import { PriceResponse, PriceFilterRequest } from './price-history.model';
 import { PriceHistoryService } from '../../../core/auth/services/price-history.service';
 import { PagedResponse } from '../../../shared/models/pagnition.model';
 import { CurrencyPipe } from '../../../shared/pipes/currency.pipe';
+import { ModalService } from '../../../shared/components/modal/modal.service';
+import { AddPriceComponent } from './add-price/add-price.component';
 
 @Component({
   selector: 'app-manager-price',
@@ -41,7 +43,10 @@ export class ProductPriceHistoryComponent implements OnInit {
     enddate: '',
   };
 
-  constructor(private priceHistoryService: PriceHistoryService) {}
+  constructor(
+    private priceHistoryService: PriceHistoryService,
+    private modalService: ModalService
+  ) {}
 
   ngOnInit(): void {
     this.loadCurrentPrices();
@@ -154,7 +159,21 @@ export class ProductPriceHistoryComponent implements OnInit {
   }
 
   addPrice(): void {
-    alert('TODO: mở modal thêm giá mới');
+     this.modalService.open(AddPriceComponent, 
+      {
+        size: 'md',
+        position: 'center',
+        theme: 'default',
+        backdrop: true,
+        closeOnBackdropClick: true,
+        closeOnEscape: true,
+        data: {
+          onSuccess: () => {
+            this.loadCurrentPrices();
+          }
+        }
+      } 
+    );
   }
 
   editPrice(item: PriceResponse): void {

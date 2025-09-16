@@ -23,6 +23,13 @@ export class ProductService {
     );
   }
 
+  getListActiveProducts(): Observable<ProductResponse[]> {
+    if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+      this.http.get<ProductResponse[]>(`${this.productUrl}/getListActiveProducts`)
+    );
+  }
+
   createProduct(payload: CreateProductRequest): Observable<any> {
     if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
