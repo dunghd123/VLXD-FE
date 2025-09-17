@@ -23,3 +23,6 @@ export interface AddPriceRequest {
  invoiceType: string;
  price: number;
 }
+export interface UpdatePriceRequest extends Partial<AddPriceRequest> {
+  id: number;
+}

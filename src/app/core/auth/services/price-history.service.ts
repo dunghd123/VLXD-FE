@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../../core/auth/services/auth.service';
-import { AddPriceRequest, PriceFilterRequest, PriceResponse } from '../../../features/manager/product-price-history/price-history.model';
+import { AddPriceRequest, PriceFilterRequest, PriceResponse, UpdatePriceRequest } from '../../../features/manager/product-price-history/price-history.model';
 import { PagedResponse } from '../../../shared/models/pagnition.model';
 
 @Injectable({
@@ -84,21 +84,12 @@ export class PriceHistoryService {
     );
   }
 
-  updatePrice(id: number, price: Partial<PriceResponse>): Observable<any> {
+  updatePrice(updatePriceRequest: UpdatePriceRequest): Observable<any> {
     if (!this.authService.isLoggedIn() || !this.authService.isManager()) {
       throw new Error('Access denied');
     }
     return this.authService.retryWithTokenRefresh(() =>
-      this.http.put(`${this.priceUrl}/update/${id}`, price)
-    );
-  }
-
-  deletePrice(id: number): Observable<any> {
-    if (!this.authService.isLoggedIn() || !this.authService.isManager()) {
-      throw new Error('Access denied');
-    }
-    return this.authService.retryWithTokenRefresh(() =>
-      this.http.delete(`${this.priceUrl}/delete/${id}`)
+      this.http.put(`${this.priceUrl}/update-price/${updatePriceRequest.id}`, updatePriceRequest)
     );
   }
 }

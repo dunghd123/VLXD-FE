@@ -45,7 +45,7 @@ export class UpdateCustomerComponent implements OnInit {
     }
     
   }
-   private populateCustomerModel(customer: any) {
+  private populateCustomerModel(customer: any) {
     this.customerModel = {
       id: customer.id || 0,
       address: customer.address || '',

@@ -7,6 +7,7 @@ import { PagedResponse } from '../../../shared/models/pagnition.model';
 import { CurrencyPipe } from '../../../shared/pipes/currency.pipe';
 import { ModalService } from '../../../shared/components/modal/modal.service';
 import { AddPriceComponent } from './add-price/add-price.component';
+import { UpdatePriceComponent } from './update-price/update-price.component';
 
 @Component({
   selector: 'app-manager-price',
@@ -254,6 +255,24 @@ export class ProductPriceHistoryComponent implements OnInit {
         else this.errorMessage = error?.message || 'Đã xảy ra lỗi không xác định';
       }
     });
+  }
+  openEditPriceModal(price: PriceResponse): void {
+    this.modalService.open(UpdatePriceComponent, 
+      {
+        size: 'md',
+        position: 'center',
+        theme: 'default',
+        backdrop: true,
+        closeOnBackdropClick: true,
+        closeOnEscape: true,
+        data: {
+          price: price,
+          onSuccess: () => {
+            this.loadCurrentPrices();
+          }
+        }
+      } 
+    );
   }
 
   // Pagination methods

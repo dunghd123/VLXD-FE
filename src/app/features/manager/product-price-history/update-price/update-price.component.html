@@ -1,0 +1,54 @@
+<div class="dialog" [class.mobile]="isMobile">
+  <div class="dialog-header">
+    <h3>Thêm sản phẩm mới</h3>
+    <button type="button" class="close-btn" (click)="closeModal()" aria-label="Đóng" title="Đóng">×</button>
+  </div>
+
+  <form #form="ngForm" class="dialog-body" (ngSubmit)="onSubmit(form)" novalidate>
+    <div class="grid">
+      <label>
+          <span>Tên vật liệu<span class="required">*</span></span>
+          <select name="productId" [(ngModel)]="updatePriceModel.productId"
+                  #productId="ngModel" [ngClass]="{'invalid': form.submitted && productId.invalid}">
+          <option *ngFor="let product of productList" [value]="product.id">
+            {{ product.id }} - {{ product.name }}
+            </option>
+          </select>
+      </label>
+      <label>
+        <span>Loại hóa đơn <span class="required">*</span></span>
+        <select name="invoiceType" [(ngModel)]="updatePriceModel.invoiceType" #invoiceType="ngModel"
+          [ngClass]="{'invalid': form.submitted && invoiceType.invalid}">
+            <option value="">-- chọn loại hóa đơn --</option>
+            <option value="OUTPUT">Xuất</option>
+            <option value="INPUT">Nhập</option>
+          </select>
+          <div *ngIf="form.submitted && invoiceType.errors" class="field-error">
+            <span *ngIf="invoiceType.errors?.['required']">Loại hóa đơn là bắt buộc</span>
+          </div>
+      </label>
+      <label>
+        <span>Giá vật liệu<span class="required">*</span></span>
+        <input type="text" name="price" [(ngModel)]="updatePriceModel.price"
+                #price="ngModel" required autocomplete="description"
+                placeholder="Nhập giá"
+                [ngClass]="{'invalid': form.submitted && price.invalid}" />
+        <div *ngIf="form.submitted && price.errors" class="field-error">
+          <span *ngIf="price.errors?.['required']">Giá là bắt buộc</span>
+        </div>
+      </label>
+    </div>
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button type="button" (click)="onCancel()" class="btn-cancel">Hủy</button>
+      <button type="submit" class="btn-submit">
+        <span *ngIf="!submitting">Lưu</span>
+        <span *ngIf="submitting">Đang lưu...</span>
+      </button>
+    </div>
+
+    <!-- General error -->
+    <div class="error" *ngIf="error" role="alert">{{ error }}</div>
+  </form>
+</div>

@@ -111,7 +111,7 @@
             <td>{{ item.startDate | date:'dd/MM/yyyy HH:mm:ss' }}</td>
             <td>{{ item.endDate | date:'dd/MM/yyyy HH:mm:ss' }}</td>
             <td>
-              <i class="fas fa-edit btn-edit" title="Sửa"></i>
+              <i class="fas fa-edit btn-edit" title="Sửa" (click) ="openEditPriceModal(item)"></i>
             </td>
           </tr>
         </tbody>
