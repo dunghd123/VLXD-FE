@@ -17,7 +17,7 @@ export class ProductService {
   ) {}
 
   getAllProducts(page: number, size: number): Observable<PagedResponse<ProductResponse>> {
-    if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
+    if (!this.authService.isLoggedIn()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
       this.http.get<PagedResponse<ProductResponse>>(`${this.productUrl}/getAllProduct?page=${page}&size=${size}`)
     );

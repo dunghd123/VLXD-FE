@@ -43,7 +43,7 @@
                   #cateId="ngModel" [ngClass]="{'invalid': form.submitted && cateId.invalid}">
             <option value="" disabled selected>chọn loại vật liệu</option>
             <option *ngFor="let category of categoryList" [value]="category.id">
-              {{ category.name }}
+             {{ category.id }} - {{ category.name }}
             </option>
           </select>
           <div *ngIf="form.submitted && cateId.errors" class="field-error">

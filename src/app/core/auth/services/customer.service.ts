@@ -17,7 +17,7 @@ export class CustomerService {
   ) {}
 
   getAllCustomers(page: number, size: number): Observable<PagedResponse<ManagerCustomerResponse>> {
-    if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
+    if (!this.authService.isLoggedIn()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
       this.http.get<PagedResponse<ManagerCustomerResponse>>(`${this.customerUrl}/getAllCustomer?page=${page}&size=${size}`)
     );

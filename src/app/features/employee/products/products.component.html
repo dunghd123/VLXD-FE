@@ -1,0 +1,64 @@
+<div class="users-page">
+  <div class="actions">
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input 
+        type="text" 
+        placeholder="Tìm kiếm sản phẩm..." 
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()">
+    </div>
+  </div>
+  
+  <div class="users-table" *ngIf="!isLoading && !errorMessage">
+    <div class="search-results-info" *ngIf="searchTerm.trim()">
+      <span>Tìm thấy {{ filteredProducts.length }} sản phẩm phù hợp với "{{ searchTerm }}"</span>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Tên sản phẩm</th>
+          <th>Mô tả</th>
+          <th>Đơn vị đo</th>
+          <th>Loại sản phẩm</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of filteredProducts">
+          <td>{{ c.name }}</td>
+          <td>{{ c.description }}</td>
+          <td>{{ c.unitMeasure }}</td>
+          <td>{{ c.cateName }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="filteredProducts.length === 0 && !isLoading && !errorMessage" class="empty-state">
+      <i class="fas fa-search"></i>
+      <p *ngIf="searchTerm.trim()">Không tìm thấy sản phẩm nào phù hợp với "{{ searchTerm }}"</p>
+      <p *ngIf="!searchTerm.trim()">Không có sản phẩm</p>
+    </div>
+
+    <div class="pagination">
+      <div class="page-size">
+        <label style="margin-right:8px;">Size:</label>
+        <select [(ngModel)]="size" (ngModelChange)="setPageSize(size)">
+          <option [ngValue]="5">5</option>
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="20">20</option>
+          <option [ngValue]="50">50</option>
+        </select>
+      </div>
+      <div class="page-controls">
+        <button (click)="prevPage()" [disabled]="isLoading || page === 0">
+          <i class="fas fa-chevron-left"></i>  Trước
+        </button>
+        <span> Trang: {{ page + 1 }} / {{ totalPages || 1 }} (tổng: {{ totalElements }}) </span>
+        <button (click)="nextPage()" [disabled]="isLoading || (totalPages > 0 && page + 1 >= totalPages)">
+          Sau <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
