@@ -14,6 +14,9 @@ import { SuppliersComponent } from './features/manager/suppliers/suppliers.compo
 import { CustomersComponent as ManagerCustomersComponent } from './features/manager/customers/customers.component';
 import { OrdersComponent as ManagerOrdersComponent } from './features/manager/orders/orders.component';
 import { ReportsComponent } from './features/manager/reports/reports.component';
+import { ReportsInputComponent } from './features/manager/reports/input/input.component';
+import { ReportsOutputComponent } from './features/manager/reports/output/output.component';
+import { ReportsRevenueComponent } from './features/manager/reports/revenue/revenue.component';
 import { ProductsComponent as EmployeeProductsComponent } from './features/employee/products/products.component';
 import { CustomersComponent as EmployeeCustomersComponent } from './features/employee/customers/customers.component';
 import { OrdersComponent as EmployeeOrdersComponent } from './features/employee/orders/orders.component';
@@ -74,7 +77,13 @@ export const routes: Routes = [
         path: 'reports', 
         component: ReportsComponent,
         canActivate: [RoleGuard],
-        data: { roles: [Role.MANAGER] }
+        data: { roles: [Role.MANAGER] },
+        children: [
+          { path: '', redirectTo: 'input', pathMatch: 'full' },
+          { path: 'input', component: ReportsInputComponent, canActivate: [RoleGuard], data: { roles: [Role.MANAGER] } },
+          { path: 'output', component: ReportsOutputComponent, canActivate: [RoleGuard], data: { roles: [Role.MANAGER] } },
+          { path: 'revenue', component: ReportsRevenueComponent, canActivate: [RoleGuard], data: { roles: [Role.MANAGER] } },
+        ]
       },
       {
         path: 'product-price-history',

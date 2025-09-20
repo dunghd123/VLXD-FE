@@ -13,6 +13,7 @@ import { AuthService } from '../../core/auth/services/auth.service';
 export class ManagerLayoutComponent {
   currentUser: any;
   isSidebarCollapsed = false;
+  isReportsOpen = false;
 
   constructor(private authService: AuthService) {
     this.currentUser = this.authService.getCurrentUser();
@@ -20,6 +21,10 @@ export class ManagerLayoutComponent {
 
   toggleSidebar(): void {
     this.isSidebarCollapsed = !this.isSidebarCollapsed;
+  }
+
+  toggleReports(): void {
+    this.isReportsOpen = !this.isReportsOpen;
   }
 
   logout(): void {

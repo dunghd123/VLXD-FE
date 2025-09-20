@@ -1,0 +1,66 @@
+.reports-page {
+  padding: 2rem;
+}
+
+.filters .grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filters label > span {
+  font-weight: 600;
+}
+
+.filters select[multiple] {
+  min-height: 100px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.15);
+  padding: 0.5rem;
+}
+
+.filters input[type="datetime-local"],
+.filters select {
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+}
+
+.actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.75rem;
+}
+
+.actions button[type="submit"] {
+  background: linear-gradient(135deg, #22b2e6, #005bd3);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.actions button[type="submit"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+@media (max-width: 768px) {
+  .filters .grid {
+    grid-template-columns: 1fr;
+  }
+}
+

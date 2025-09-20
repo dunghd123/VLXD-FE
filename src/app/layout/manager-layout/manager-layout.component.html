@@ -61,10 +61,18 @@
           <i class="fas fa-shopping-cart"></i>
           <span>Quản lý đơn hàng</span>
         </a>
-        <a routerLink="/manager/reports" routerLinkActive="active" title="Báo cáo - Thống kê và phân tích">
-          <i class="fas fa-chart-bar"></i>
-          <span>Báo cáo</span>
-        </a>
+        <div class="nav-dropdown" [class.open]="isReportsOpen">
+          <button type="button" (click)="toggleReports()" title="Báo cáo - Thống kê và phân tích">
+            <i class="fas fa-chart-bar"></i>
+            <span>Báo cáo</span>
+            <i class="fas" [class.fa-chevron-down]="!isReportsOpen" [class.fa-chevron-up]="isReportsOpen" style="margin-left: auto;"></i>
+          </button>
+          <div class="dropdown-items" *ngIf="isReportsOpen">
+            <a routerLink="/manager/reports/input" routerLinkActive="active">Thống kê nhập kho</a>
+            <a routerLink="/manager/reports/output" routerLinkActive="active">Thống kê xuất kho</a>
+            <a routerLink="/manager/reports/revenue" routerLinkActive="active">Thống kê doanh thu</a>
+          </div>
+        </div>
       </div>
     </nav>
     
