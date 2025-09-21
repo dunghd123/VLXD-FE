@@ -1,0 +1,405 @@
+/* Dialog container - now works with Angular CDK Overlay */
+.dialog {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 800px; /* Minimum width for better table layout */
+}
+
+/* Dialog header */
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+  flex-shrink: 0;
+}
+
+.dialog-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #e9ecef;
+  color: #333;
+}
+
+/* Dialog body - scrollable content area */
+.dialog-body {
+  padding: 0;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  max-height: calc(100vh - 200px); /* Prevent overflow */
+}
+
+/* Table Container */
+.table-container {
+  overflow-x: auto;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.table-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  font-size: 14px;
+}
+
+thead {
+  background: #f8f9fa;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+thead th {
+  padding: 16px 20px;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+  white-space: nowrap;
+  font-size: 14px;
+  background: #f8f9fa;
+}
+
+tbody tr {
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+tbody td {
+  padding: 16px 20px;
+  color: #333;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+/* Column Styling */
+tbody td:first-child {
+  font-weight: 500;
+  color: #333;
+}
+
+tbody td:nth-child(3) {
+  text-align: center;
+  font-weight: 500;
+  color: #28a745;
+}
+
+tbody td:nth-child(4),
+tbody td:nth-child(5) {
+  text-align: right;
+  font-weight: 600;
+  color: #28a745;
+}
+
+.price-column {
+  text-align: right !important;
+  font-weight: 600;
+  color: #28a745;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6c757d;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  display: block;
+  color: #dee2e6;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: #6c757d;
+}
+
+.loading-state i {
+  font-size: 1.5rem;
+  margin-right: 12px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+@media (max-width: 1200px) {
+  .dialog {
+    min-width: 700px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dialog {
+    min-width: 90vw;
+    max-width: 95vw;
+  }
+  
+  .dialog-header {
+    padding: 16px 20px;
+  }
+  
+  .dialog-header h3 {
+    font-size: 16px;
+  }
+  
+  .close-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 20px;
+  }
+  
+  .dialog-body {
+    max-height: 80vh;
+  }
+  
+  table {
+    font-size: 13px;
+  }
+  
+  thead th,
+  tbody td {
+    padding: 12px 16px;
+  }
+  
+  thead th {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dialog {
+    min-width: 95vw;
+    max-width: 98vw;
+  }
+  
+  .dialog-header {
+    padding: 14px 16px;
+  }
+  
+  .dialog-header h3 {
+    font-size: 15px;
+  }
+  
+  .close-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 18px;
+  }
+  
+  table {
+    font-size: 12px;
+  }
+  
+  thead th,
+  tbody td {
+    padding: 10px 12px;
+  }
+  
+  thead th {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .dialog {
+    min-width: 98vw;
+    max-width: 99vw;
+  }
+  
+  .dialog-header {
+    padding: 12px 14px;
+  }
+  
+  .dialog-header h3 {
+    font-size: 14px;
+  }
+  
+  table {
+    font-size: 11px;
+  }
+  
+  thead th,
+  tbody td {
+    padding: 8px 10px;
+  }
+  
+  thead th {
+    font-size: 11px;
+  }
+}
+
+/* ===== TOUCH-FRIENDLY IMPROVEMENTS ===== */
+
+@media (hover: none) and (pointer: coarse) {
+  .close-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* ===== ACCESSIBILITY SUPPORT ===== */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .dialog {
+    border: 2px solid #000;
+  }
+  
+  table {
+    border: 1px solid #000;
+  }
+  
+  thead th,
+  tbody td {
+    border: 1px solid #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .dialog,
+  .close-btn,
+  tbody tr {
+    transition: none;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .dialog {
+    background: #2d3748;
+    color: #e2e8f0;
+  }
+  
+  .dialog-header {
+    background: #4a5568;
+    border-bottom-color: #718096;
+  }
+  
+  .dialog-header h3 {
+    color: #e2e8f0;
+  }
+  
+  .close-btn {
+    color: #e2e8f0;
+  }
+  
+  .close-btn:hover {
+    background-color: #2d3748;
+  }
+  
+  table {
+    background: #2d3748;
+    color: #e2e8f0;
+  }
+  
+  thead {
+    background: #4a5568;
+  }
+  
+  thead th {
+    background: #4a5568;
+    color: #e2e8f0;
+    border-bottom-color: #718096;
+  }
+  
+  tbody tr {
+    border-bottom-color: #4a5568;
+  }
+  
+  tbody tr:hover {
+    background-color: #4a5568;
+  }
+  
+  tbody td {
+    color: #e2e8f0;
+  }
+  
+  .price-column {
+    color: #68d391;
+  }
+  
+  tbody td:nth-child(3),
+  tbody td:nth-child(4),
+  tbody td:nth-child(5) {
+    color: #68d391;
+  }
+}

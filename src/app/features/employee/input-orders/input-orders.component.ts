@@ -7,6 +7,7 @@ import { ModalService } from '../../../shared/components/modal/modal.service';
 import { CurrencyPipe } from '../../../shared/pipes/currency.pipe';
 import { ToastMessageService } from '../../../shared/services/toast-message.service';
 import { InputInvoiceService } from '../../../core/auth/services/input-invoice.service';
+import { ViewInputDetailModalComponent } from './detail-input/view-detail/view-input-detail-modal.component';
 
 @Component({
   selector: 'app-input-orders',
@@ -32,6 +33,10 @@ export class InputOrdersComponent {
       supName: '',
       statusFilter: null,
     };
+
+    // Modal state
+    showDetailModal: boolean = false;
+    selectedInvoice: InputInvoiceResponse | null = null;
   
     constructor(
       private modalService: ModalService,
@@ -131,7 +136,18 @@ export class InputOrdersComponent {
       });
     }
     openViewInputInvoiceModal(inputInvoice: InputInvoiceResponse) {
-      alert("TODO: view input invoice" + inputInvoice.id);
+      this.modalService.open(ViewInputDetailModalComponent, {
+        size: 'lg',
+        position: 'center',
+        data: {
+          inputDetail: inputInvoice.listInvoiceDetails,
+        }
+      });
+    }
+
+    closeDetailModal(): void {
+      this.showDetailModal = false;
+      this.selectedInvoice = null;
     }
 
     // Pagination methods

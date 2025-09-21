@@ -31,5 +31,4 @@ export class InputInvoiceService {
       this.http.get<PagedResponse<InputInvoiceResponse>>(`${this.inputUrl}/getAllInputInvoiceByEmp/${this.authService.getCurrentUser()?.username}`, { params })
     );
   }
-
 }
