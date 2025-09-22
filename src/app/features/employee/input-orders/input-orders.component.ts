@@ -5,15 +5,16 @@ import { InputInvoiceFilter, InputInvoiceResponse } from './input-orders.model';
 import { PagedResponse } from '../../../shared/models/pagnition.model';
 import { ModalService } from '../../../shared/components/modal/modal.service';
 import { CurrencyPipe } from '../../../shared/pipes/currency.pipe';
-import { ToastMessageService } from '../../../shared/services/toast-message.service';
 import { InputInvoiceService } from '../../../core/auth/services/input-invoice.service';
 import { ViewInputDetailModalComponent } from './detail-input/view-detail/view-input-detail-modal.component';
 import { EditInputDetailModalComponent } from './detail-input/edit-detail/edit-input-detail-modal.component';
+import { InvoiceStatusEnums } from '../../../shared/models/enums.model';
+import { StatusTranslatePipe } from '../../../shared/pipes/status-translate.pipe';
 
 @Component({
   selector: 'app-input-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule, CurrencyPipe],
+  imports: [CommonModule, FormsModule, CurrencyPipe, StatusTranslatePipe],
   templateUrl: './input-orders.component.html',
   styleUrls: ['./input-orders.component.css'],
 })
@@ -32,7 +33,7 @@ export class InputOrdersComponent {
     // Filter state
     filter = {
       supName: '',
-      statusFilter: null,
+      statusFilter: null as InvoiceStatusEnums | null,
     };
 
     // Modal state
@@ -41,56 +42,11 @@ export class InputOrdersComponent {
   
     constructor(
       private modalService: ModalService,
-      private toast: ToastMessageService,
       private inputService: InputInvoiceService
     ) {}
   
     ngOnInit(): void {
       this.loadInputInvoice();
-    }
-  
-  
-    // Accepts common formats: dd-MM-yyyy, dd-MM-yyyy HH:mm:ss, dd/MM/yyyy, yyyy-MM-dd, ISO strings
-    private parseDate(value: any): Date | '' {
-      if (!value) return '';
-      if (value instanceof Date) return value;
-      if (typeof value !== 'string') {
-        const d = new Date(value);
-        return isNaN(d.getTime()) ? '' : d;
-      }
-      const v = value.trim();
-      
-      // dd-MM-yyyy HH:mm:ss
-      const dmYTime = /^(\d{2})-(\d{2})-(\d{4})\s+(\d{2}):(\d{2}):(\d{2})$/;
-      // dd-MM-yyyy
-      const dmY = /^(\d{2})-(\d{2})-(\d{4})$/;
-      // dd/MM/yyyy
-      const dmYSlash = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-      // yyyy-MM-dd
-      const yMd = /^(\d{4})-(\d{2})-(\d{2})$/;
-      
-      let m;
-      if ((m = v.match(dmYTime))) {
-        const [, dd, mm, yyyy, hh, min, ss] = m;
-        const d = new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(hh), Number(min), Number(ss));
-        return isNaN(d.getTime()) ? '' : d;
-      }
-      if ((m = v.match(dmY))) {
-        const [, dd, mm, yyyy] = m;
-        const d = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
-        return isNaN(d.getTime()) ? '' : d;
-      }
-      if ((m = v.match(dmYSlash))) {
-        const [, dd, mm, yyyy] = m;
-        const d = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
-        return isNaN(d.getTime()) ? '' : d;
-      }
-      if (yMd.test(v)) {
-        const d = new Date(v);
-        return isNaN(d.getTime()) ? '' : d;
-      }
-      const d = new Date(v);
-      return isNaN(d.getTime()) ? '' : d;
     }
   
     applyFilter(): void {
@@ -104,12 +60,25 @@ export class InputOrdersComponent {
       };
       this.loadInputInvoice(0, this.size);
     }
-  
-    addPrice(): void {
-    
-    }
+  parseTime(dateString: string): Date | null {
+    if (!dateString) return null;
+    const [datePart, timePart] = dateString.split(" ");
+    if (!datePart || !timePart) return null;
+    const [year, month, day] = datePart.split("-").map(Number); // yyyy-MM-dd
+    const [hours, minutes, seconds] = timePart.split(":").map(Number);
+    return new Date(year, month - 1, day, hours, minutes, seconds);
+  }
+  canEdit(inputInvoice: InputInvoiceResponse, hours: number): boolean {
+    const creationDate = this.parseTime(inputInvoice.creationTime); // Date
+    if (!creationDate) return false;
 
-  
+    const expiryDate = new Date(creationDate);
+    expiryDate.setHours(expiryDate.getHours() + hours);
+
+    const now = new Date();
+    return now <= expiryDate;
+  }
+
     loadInputInvoice(page?: number, size?: number): void {
       if (typeof page === 'number') this.page = page;
       if (typeof size === 'number') this.size = size;
@@ -157,6 +126,19 @@ export class InputOrdersComponent {
         }
       });
     }
+
+  openEditInputInvoiceModal(inputInvoice: InputInvoiceResponse){
+    this.modalService.open(EditInputDetailModalComponent, {
+      size: 'lg',
+      position: 'center',
+      data:{
+        inputInvoice: inputInvoice,
+        onSuccess: () => {
+          this.loadInputInvoice(this.page, this.size);
+        }
+      }
+    });
+  }
 
     closeDetailModal(): void {
       this.showDetailModal = false;

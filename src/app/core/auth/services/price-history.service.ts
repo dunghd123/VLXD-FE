@@ -92,4 +92,14 @@ export class PriceHistoryService {
       this.http.put(`${this.priceUrl}/update-price/${updatePriceRequest.id}`, updatePriceRequest)
     );
   }
+  getCurrentInputPriceByProductId(id: number) : Observable<any> {
+    if (!this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.http.get(`${this.priceUrl}/load-input-current-price/${id}`);
+  }
+  getCurrentOutputPriceByProductId(id: number) : Observable<any> {
+    if (!this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+      this.http.get(`${this.priceUrl}/load-output-current-price/${id}`)
+    );
+  }
 }

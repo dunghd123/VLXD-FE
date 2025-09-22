@@ -1,15 +1,15 @@
 <div class="dialog" [class.mobile]="isMobile">
   <div class="dialog-header">
-    <h3>Thêm hóa đơn mới</h3>
+    <h3>{{ isEditMode ? 'Sửa hóa đơn' : 'Thêm hóa đơn mới' }}</h3>
     <button type="button" class="close-btn" (click)="closeModal()" aria-label="Đóng" title="Đóng">×</button>
   </div>
 
   <form #form="ngForm" class="dialog-body" (ngSubmit)="onSubmit(form)" novalidate>
     <div class="grid">
       <label>
-        <span>Tên nhân viên</span>
+        <span>Tên nhân viên  <span class="required">*</span></span>
         <input 
-          type="text" name="fullName" [(ngModel)]="EmpResponse.name" disabled="true"
+          type="text" name="fullName" [(ngModel)]="currentEmp.name" disabled="true"
           #fullName="ngModel" required autocomplete="name" />
       </label>
       <label>

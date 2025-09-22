@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { AuthService } from "./auth.service";
 import { PagedResponse } from "../../../shared/models/pagnition.model";
-import { InputInvoiceFilter, InputInvoiceResponse } from "../../../features/employee/input-orders/input-orders.model";
+import { InputInvoiceFilter, InputInvoiceRequest, InputInvoiceResponse } from "../../../features/employee/input-orders/input-orders.model";
 import { Observable } from "rxjs";
 
 @Injectable({
@@ -29,6 +29,20 @@ export class InputInvoiceService {
     }
     return this.authService.retryWithTokenRefresh(() =>
       this.http.get<PagedResponse<InputInvoiceResponse>>(`${this.inputUrl}/getAllInputInvoiceByEmp/${this.authService.getCurrentUser()?.username}`, { params })
+    );
+  }
+
+  createInputInvoice(payload: InputInvoiceRequest): Observable<any> {
+    if (!this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+      this.http.post(`${this.inputUrl}/add-input-invoice`, payload)
+    );
+  }
+
+  updateInputInvoice(id: number, payload: InputInvoiceRequest): Observable<any> {
+    if (!this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+      this.http.put(`${this.inputUrl}/update-input-invoice/${id}`, payload)
     );
   }
 }
