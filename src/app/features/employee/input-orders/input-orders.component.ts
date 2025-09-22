@@ -8,6 +8,7 @@ import { CurrencyPipe } from '../../../shared/pipes/currency.pipe';
 import { ToastMessageService } from '../../../shared/services/toast-message.service';
 import { InputInvoiceService } from '../../../core/auth/services/input-invoice.service';
 import { ViewInputDetailModalComponent } from './detail-input/view-detail/view-input-detail-modal.component';
+import { EditInputDetailModalComponent } from './detail-input/edit-detail/edit-input-detail-modal.component';
 
 @Component({
   selector: 'app-input-orders',
@@ -140,7 +141,19 @@ export class InputOrdersComponent {
         size: 'lg',
         position: 'center',
         data: {
+          inputInvoice: inputInvoice,
           inputDetail: inputInvoice.listInvoiceDetails,
+        }
+      });
+    }
+    openAddInputInvoiceModal(){
+      this.modalService.open(EditInputDetailModalComponent, {
+        size: 'lg',
+        position: 'center',
+        data:{
+          onSuccess: () => {
+            this.loadInputInvoice(0, this.size);
+          }
         }
       });
     }

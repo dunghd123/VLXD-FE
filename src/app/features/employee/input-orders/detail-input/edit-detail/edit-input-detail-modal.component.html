@@ -1,0 +1,52 @@
+<div class="dialog" [class.mobile]="isMobile">
+  <div class="dialog-header">
+    <h3>Thêm hóa đơn mới</h3>
+    <button type="button" class="close-btn" (click)="closeModal()" aria-label="Đóng" title="Đóng">×</button>
+  </div>
+
+  <form #form="ngForm" class="dialog-body" (ngSubmit)="onSubmit(form)" novalidate>
+    <div class="grid">
+      <label>
+        <span>Tên nhân viên</span>
+        <input 
+          type="text" name="fullName" [(ngModel)]="EmpResponse.name" disabled="true"
+          #fullName="ngModel" required autocomplete="name" />
+      </label>
+      <label>
+        <span>Nhà cung cấp <span class="required">*</span></span>
+        <select name="supId" [(ngModel)]="InputInvoiceModel.supId"
+                #supId="ngModel" [ngClass]="{'invalid': form.submitted && supId.invalid}">
+          <option value="" disabled selected>chọn nhà cung cấp</option>
+          <option *ngFor="let sup of suppList" [value]="sup.id">
+            {{ sup.id }} - {{ sup.name }}
+          </option>
+        </select>
+        <div *ngIf="form.submitted && supId.errors" class="field-error">
+          <span *ngIf="supId.errors?.['required']">Nhà cung cấp là bắt buộc</span>
+        </div>
+      </label>
+    </div>
+
+    <div class="details-section">
+      <h4>Chi tiết hóa đơn</h4>
+      <app-editable-table
+        [columns]="detailColumns"
+        [(rows)]="InputInvoiceModel.listInvoiceDetails"
+        (rowsChange)="onDetailsChanged($event)"
+        [addButtonLabel]="'Thêm dòng'"
+      ></app-editable-table>
+    </div>
+
+    <!-- Actions -->
+    <div class="dialog-actions">
+      <button type="button" (click)="onCancel()" class="btn-cancel">Hủy</button>
+      <button type="submit" class="btn-submit">
+        <span *ngIf="!submitting">Lưu</span>
+        <span *ngIf="submitting">Đang lưu...</span>
+      </button>
+    </div>
+
+    <!-- General error -->
+    <div class="error" *ngIf="error" role="alert">{{ error }}</div>
+  </form>
+</div>

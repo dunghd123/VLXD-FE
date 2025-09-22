@@ -61,6 +61,11 @@ export class AuthService {
       this.http.get<EmployeeResponse[]>(`${this.employeeUrl}/getAllManager`)
     );
   }
+  getEmpByUsername(username: string): Observable<EmployeeResponse> {
+    return this.retryWithTokenRefresh(() =>
+      this.http.get<EmployeeResponse>(`${this.employeeUrl}/getEmpByUsername?username=${username}`)
+    );
+  }
 
   createEmployeeUser(payload: CreateUserRequest): RxObservable<any> {
     if (!this.isLoggedIn() || !this.isManager()) throw new Error('Access denied');

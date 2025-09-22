@@ -1,0 +1,62 @@
+.editable-table {
+  width: 100%;
+}
+
+.editable-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.editable-table th,
+.editable-table td {
+  border: 1px solid #e5e7eb;
+  padding: 8px;
+  vertical-align: middle;
+}
+
+.editable-table thead th {
+  background: #f9fafb;
+  font-weight: 600;
+  text-align: left;
+}
+
+.editable-table input,
+.editable-table select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+}
+
+.editable-table .row-actions {
+  width: 40px;
+  text-align: center;
+}
+
+.editable-table .btn-remove {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.editable-table .table-actions {
+  margin-top: 8px;
+}
+
+.editable-table .btn-add {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.editable-table .empty {
+  text-align: center;
+  color: #6b7280;
+}
+
+

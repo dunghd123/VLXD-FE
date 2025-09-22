@@ -3,7 +3,7 @@ export interface InputInvoiceRequest {
     empId: number,
     creationTime: string
     listInvoiceDetails: InputInvoiceDetailRequest[],
-}
+};
 
 export interface InputInvoiceDetailRequest {
     proId: number,

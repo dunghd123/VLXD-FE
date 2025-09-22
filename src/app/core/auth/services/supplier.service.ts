@@ -23,6 +23,10 @@ export class SupplierService {
       this.http.get<PagedResponse<ManagerSupplierResponse>>(`${this.supplierUrl}/getAllSupplier?page=${page}&size=${size}`)
     );
   }
+    getListActiveSuppliers(): Observable<ManagerSupplierResponse[]> {
+      if (!this.authService.isLoggedIn()) throw new Error('Access denied');
+      return this.http.get<ManagerSupplierResponse[]>(`${this.supplierUrl}/getAllActiveSupplier`);
+    }
 
   createSupplier(payload: CreateSupplierRequest): Observable<any> {
     if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');

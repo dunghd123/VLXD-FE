@@ -24,7 +24,7 @@ export class ProductService {
   }
 
   getListActiveProducts(): Observable<ProductResponse[]> {
-    if (!this.authService.isLoggedIn() || !this.authService.isManager()) throw new Error('Access denied');
+    if (!this.authService.isLoggedIn()) throw new Error('Access denied');
     return this.http.get<ProductResponse[]>(`${this.productUrl}/getListActiveProducts`);
   }
 
