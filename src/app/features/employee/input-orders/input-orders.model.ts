@@ -9,10 +9,12 @@ export interface InputInvoiceRequest {
 };
 
 export interface InputInvoiceDetailRequest {
+    id?: number,
     proId: number,
     whId: number,
     quantity: number,
 };
+
 export interface InputInvoiceResponse {
     id: number,
     supName: string,

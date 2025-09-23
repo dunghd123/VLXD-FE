@@ -9,6 +9,7 @@ import { ModalService } from '../../../shared/components/modal/modal.service';
 import { OutputInvoiceService } from '../../../core/auth/services/output-invoice.service';
 import { PagedResponse } from '../../../shared/models/pagnition.model';
 import { ViewOutputDetailModalComponent } from './detail-output/view-detail/view-output-detail-modal.component';
+import { EditOutputDetailModalComponent } from './detail-output/edit-detail/edit-output-detail-modal.component';
 
 @Component({
   selector: 'app-output-orders',
@@ -78,66 +79,66 @@ export class OutputOrdersComponent {
     return now <= expiryDate;
   }
 
-    loadOutputInvoice(page?: number, size?: number): void {
-      if (typeof page === 'number') this.page = page;
-      if (typeof size === 'number') this.size = size;
-      
-      this.isLoading = true;
-      this.errorMessage = '';
-  
-      const filterRequest: OutputInvoiceFilter = {
-        pageFilter: this.page,
-        sizeFilter: this.size,
-        cusNameFilter: this.filter.cusName || '',
-        statusFilter: this.filter.statusFilter !== null ? this.filter.statusFilter : null,
-      };
-      this.outputService.loadOutputInvoicesByUser(filterRequest).subscribe({
-        next: (response: PagedResponse<any>) => {
-          this.isLoading = false;
-          this.outputInvoiceData = response.content;
-          this.totalPages = response.page?.totalPages ?? 0;
-          this.totalElements = response.page?.totalElements ?? 0;
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.errorMessage = error.message;
-        },
-      });
-    }
-    openViewOutputInvoiceDetailModal(output: OutputInvoiceResponse) {
-      this.modalService.open(ViewOutputDetailModalComponent, {
-        size: 'lg',
-        position: 'center',
-        data: {
-          outputInvoice: output,
-          outputDetail: output.listOutputInvoiceDetails,
-        }
-      });
-    }
-    // openAddInputInvoiceModal(){
-    //   this.modalService.open(EditInputDetailModalComponent, {
-    //     size: 'lg',
-    //     position: 'center',
-    //     data:{
-    //       onSuccess: () => {
-    //         this.loadOutputInvoice(0, this.size);
-    //       }
-    //     }
-    //   });
-    // }
+  loadOutputInvoice(page?: number, size?: number): void {
+    if (typeof page === 'number') this.page = page;
+    if (typeof size === 'number') this.size = size;
+    
+    this.isLoading = true;
+    this.errorMessage = '';
 
-  // openEditInputInvoiceModal(output: OutputInvoiceResponse){
-  //   this.modalService.open(EditInputDetailModalComponent, {
-  //     size: 'lg',
-  //     position: 'center',
-  //     data:{
-  //       inputInvoice: inputInvoice,
-  //       onSuccess: () => {
-  //         this.loadOutputInvoice(this.page, this.size);
-  //       }
-  //     }
-  //   });
-  // }
+    const filterRequest: OutputInvoiceFilter = {
+      pageFilter: this.page,
+      sizeFilter: this.size,
+      cusNameFilter: this.filter.cusName || '',
+      statusFilter: this.filter.statusFilter !== null ? this.filter.statusFilter : null,
+    };
+    this.outputService.loadOutputInvoicesByUser(filterRequest).subscribe({
+      next: (response: PagedResponse<any>) => {
+        this.isLoading = false;
+        this.outputInvoiceData = response.content;
+        this.totalPages = response.page?.totalPages ?? 0;
+        this.totalElements = response.page?.totalElements ?? 0;
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = error.message;
+      },
+    });
+  }
+  openViewOutputInvoiceDetailModal(output: OutputInvoiceResponse) {
+    this.modalService.open(ViewOutputDetailModalComponent, {
+      size: 'lg',
+      position: 'center',
+      data: {
+        outputInvoice: output,
+        outputDetail: output.listOutputInvoiceDetails,
+      }
+    });
+  }
+  openAddOutputInvoiceModal(){
+    this.modalService.open(EditOutputDetailModalComponent, {
+      size: 'lg',
+      position: 'center',
+      data:{
+        onSuccess: () => {
+          this.loadOutputInvoice(0, this.size);
+        }
+      }
+    });
+  }
+
+  openEditOutputInvoiceModal(output: OutputInvoiceResponse){
+    this.modalService.open(EditOutputDetailModalComponent, {
+      size: 'lg',
+      position: 'center',
+      data:{
+        outputInvoice: output,
+        onSuccess: () => {
+          this.loadOutputInvoice(this.page, this.size);
+        }
+      }
+    });
+  }
 
     closeDetailModal(): void {
       this.showDetailModal = false;

@@ -5,10 +5,12 @@ export interface OutputInvoiceRequest {
     empId: number,
     creationTime: string,
     updateTime: string,
+    shipAddress?: string, 
     listInvoiceDetails: OutputInvoiceDetailRequest[],
 };
 
 export interface OutputInvoiceDetailRequest {
+    id?: number
     proId: number,
     whId: number,
     quantity: number,
@@ -19,6 +21,7 @@ export interface OutputInvoiceResponse {
     empName: string,
     creationTime: string,
     updateTime: string,
+    shipAddress?: string,
     status: InvoiceStatusEnums,
     listOutputInvoiceDetails: OutputInvoiceDetailResponse[],
     totalAmount: number,

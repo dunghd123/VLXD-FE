@@ -43,4 +43,8 @@ export class CustomerService {
       this.http.delete(`${this.customerUrl}/delete-customer/${id}`)
     );
   }
+  loadAllActiveCustomer(): Observable<ManagerCustomerResponse[]> {
+    if (!this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.http.get<ManagerCustomerResponse[]>(`${this.customerUrl}/getAllActiveCustomer`);
+  }
 }

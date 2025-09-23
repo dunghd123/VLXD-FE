@@ -1,40 +1,40 @@
 import { Component, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InputInvoiceDetailRequest, InputInvoiceDetailResponse, InputInvoiceRequest } from '../../input-orders.model';
 import { ModalService } from '../../../../../shared/components/modal/modal.service';
 import { MODAL_DATA } from '../../../../../shared/components/modal/modal.token';
 import { FormsModule, NgForm } from '@angular/forms';
 import { EditableTableComponent, EditableTableColumn } from '../../../../../shared/components/editable-table/editable-table.component';
 import { ProductService } from '../../../../../core/auth/services/product.service';
-import { SupplierService } from '../../../../../core/auth/services/supplier.service';
 import { ProductResponse } from '../../../../manager/products/products.model';
-import { ManagerSupplierResponse } from '../../../../manager/suppliers/suppliers.model';
 import { AuthService } from '../../../../../core/auth/services/auth.service';
 import { EmployeeResponse } from '../../../../manager/users/user.model';
 import { Warehouse } from '../../../../../shared/models/warehouse.model';
 import { WarehouseService } from '../../../../../core/auth/services/warehouse.service';
-import { InputInvoiceService } from '../../../../../core/auth/services/input-invoice.service';
 import { PriceHistoryService } from '../../../../../core/auth/services/price-history.service';
 import { ToastMessageService } from '../../../../../shared/services/toast-message.service';
+import { ManagerCustomerResponse } from '../../../../manager/customers/customers.model';
+import { OutputInvoiceDetailResponse, OutputInvoiceRequest } from '../../output-orders.model';
+import { CustomerService } from '../../../../../core/auth/services/customer.service';
+import { OutputInvoiceService } from '../../../../../core/auth/services/output-invoice.service';
 
 
 @Component({
-  selector: 'app-edit-input-detail-modal',
+  selector: 'app-edit-output-detail-modal',
   standalone: true,
   imports: [CommonModule, FormsModule, EditableTableComponent ],
-  templateUrl: './edit-input-detail-modal.component.html',
-  styleUrls: ['./edit-input-detail-modal.component.css']
+  templateUrl: './edit-output-detail-modal.component.html',
+  styleUrls: ['./edit-output-detail-modal.component.css']
 })
-export class EditInputDetailModalComponent implements OnInit {
+export class EditOutputDetailModalComponent implements OnInit {
   @ViewChild('form') form!: NgForm;
   submitting = false;
   error = '';
   isMobile = false;
   isEditMode = false;
 
-  inputInvoiceid: number =0;
+  outputInvoiceid: number = 0;
   productList: ProductResponse[] = [];
-  suppList: ManagerSupplierResponse[] = [];
+  cusList: ManagerCustomerResponse[] = [];
   warehouseList: Warehouse[] = [];
   
   currentEmp: EmployeeResponse = {
@@ -48,8 +48,8 @@ export class EditInputDetailModalComponent implements OnInit {
     isActive: false
   }
 
-  InputInvoiceModel: InputInvoiceRequest = {
-    supId: 0,
+  outputInvoiceModel: OutputInvoiceRequest = {
+    cusId: 0,
     empId: 0,
     creationTime: '',
     updateTime: '',
@@ -67,10 +67,10 @@ export class EditInputDetailModalComponent implements OnInit {
     @Inject(MODAL_DATA) public data: any,
     private modalService: ModalService,
     private productService: ProductService,
-    private supplierService: SupplierService,
+    private customerService: CustomerService,
     private authService: AuthService,
     private warehouseService: WarehouseService,
-    private inputInvoiceService: InputInvoiceService,
+    private outputService: OutputInvoiceService,
     private priceHistoryService: PriceHistoryService,
     private toast: ToastMessageService
   ) {
@@ -78,12 +78,12 @@ export class EditInputDetailModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(this.data && this.data.inputInvoice){
-      this.inputInvoiceid = this.data.inputInvoice.id;
-      this.isEditMode = this.inputInvoiceid !== 0;
+    if(this.data && this.data.outputInvoice){
+      this.outputInvoiceid = this.data.outputInvoice.id;
+      this.isEditMode = this.outputInvoiceid !== 0;
     }
     this.loadProducts();
-    this.loadSuppliers();
+    this.loadCustomers();
     this.loadWarehouses();
     this.getEmpByUsername();
   }
@@ -106,9 +106,9 @@ export class EditInputDetailModalComponent implements OnInit {
       this.tryPrefillFromData();
     })
   }
-  loadSuppliers(){
-    this.supplierService.getListActiveSuppliers().subscribe((response) => {
-      this.suppList = response;
+  loadCustomers(){
+    this.customerService.loadAllActiveCustomer().subscribe((response) => {
+      this.cusList = response;
       this.tryPrefillFromData();
     })
   }
@@ -124,7 +124,7 @@ export class EditInputDetailModalComponent implements OnInit {
         this.loadPriceForRow(row as any, selectedProductId);
       }
     }
-    this.InputInvoiceModel.listInvoiceDetails = rows as any;
+    this.outputInvoiceModel.listInvoiceDetails = rows as any;
   }
   @HostListener('window:resize')
   onResize() {
@@ -134,7 +134,7 @@ export class EditInputDetailModalComponent implements OnInit {
   getEmpByUsername(){
     return this.authService.getEmpByUsername(this.authService.getCurrentUser()?.username || '').subscribe((response) => {
       this.currentEmp = response
-      this.InputInvoiceModel.empId = this.currentEmp.id;
+      this.outputInvoiceModel.empId = this.currentEmp.id;
     });
   }
 
@@ -142,7 +142,7 @@ export class EditInputDetailModalComponent implements OnInit {
     this.isMobile = window.innerWidth <= 768;
   }
   getCurrentVNTime(): string {
-    const now = new Date();
+   const now = new Date();
     const yyyy = now.getFullYear();
     const MM = String(now.getMonth() + 1).padStart(2, '0');
     const dd = String(now.getDate()).padStart(2, '0');
@@ -160,22 +160,22 @@ export class EditInputDetailModalComponent implements OnInit {
     this.submitting = true;
     this.error = '';
     const now = this.getCurrentVNTime(); 
-    const requestPayload: InputInvoiceRequest = {
-      supId: this.InputInvoiceModel.supId,
-      empId: this.InputInvoiceModel.empId,
-      creationTime: this.data.inputInvoice ? this.data.inputInvoice.creationTime  : now,                                  // gán mới khi create
+    const requestPayload: OutputInvoiceRequest = {
+      cusId: this.outputInvoiceModel.cusId,
+      empId: this.outputInvoiceModel.empId,
+      creationTime: this.data.inputInvoice ? this.data.inputInvoice.creationTime   : now,                                  // gán mới khi create
       updateTime: this.data.inputInvoice ? now : now,   
-      listInvoiceDetails: (this.InputInvoiceModel.listInvoiceDetails || []).map(d => ({
+      shipAddress: this.outputInvoiceModel.shipAddress || '',
+      listInvoiceDetails: (this.outputInvoiceModel.listInvoiceDetails || []).map(d => ({
         id: d.id || 0,
         proId: Number((d as any).proId) || 0,
         whId: Number((d as any).whId) || 0,
         quantity: Number((d as any).quantity) || 0,
       }))
     };
-
-    const obs = this.isEditMode && this.inputInvoiceid
-      ? this.inputInvoiceService.updateInputInvoice(this.inputInvoiceid, requestPayload)
-      : this.inputInvoiceService.createInputInvoice(requestPayload);
+    const obs = this.isEditMode && this.outputInvoiceid
+      ? this.outputService.updateOutputInvoice(this.outputInvoiceid, requestPayload)
+      : this.outputService.createOutputInvoice(requestPayload);
 
     obs.subscribe({
       next: (response) => {
@@ -211,24 +211,24 @@ export class EditInputDetailModalComponent implements OnInit {
     this.modalService.close();
   }
 
-  trackByFn(index: number, item: InputInvoiceDetailResponse): number {
+  trackByFn(index: number, item: OutputInvoiceDetailResponse): number {
     return item.id || index;
   }
 
   private tryPrefillFromData(): void {
-    if (!this.isEditMode || !this.data?.inputInvoice) return;
+    if (!this.isEditMode || !this.data?.outputInvoice) return;
 
     // Prefill header fields
-    const inv = this.data.inputInvoice;
-    if (this.suppList?.length) {
-      const sup = this.suppList.find(s => s.name === inv.supName);
-      if (sup) this.InputInvoiceModel.supId = sup.id as unknown as number;
+    const inv = this.data.outputInvoice;
+    if (this.cusList?.length) {
+      const cus = this.cusList.find(c => c.name === inv.cusName);
+      if (cus) this.outputInvoiceModel.cusId = cus.id as unknown as number;
     }
 
     // Prefill details when lists are available
     if (!this.productList?.length || !this.warehouseList?.length) return;
-    if (Array.isArray(inv.listInvoiceDetails)) {
-      this.InputInvoiceModel.listInvoiceDetails = inv.listInvoiceDetails.map((d: any) => {
+    if (Array.isArray(inv.listOutputInvoiceDetails)) {
+      this.outputInvoiceModel.listInvoiceDetails = inv.listOutputInvoiceDetails.map((d: OutputInvoiceDetailResponse) => {
         const product = this.productList.find(p => p.name === d.productName);
         const warehouse = this.warehouseList.find(w => w.name === d.warehouseName);
         const mapped: any = {
@@ -248,7 +248,7 @@ export class EditInputDetailModalComponent implements OnInit {
   }
 
   private loadPriceForRow(row: any, productId: number): void {
-    this.priceHistoryService.getCurrentInputPriceByProductId(productId).subscribe({
+    this.priceHistoryService.getCurrentOutputPriceByProductId(productId).subscribe({
       next: (resp: any) => {
         const priceValue = typeof resp === 'object' && resp !== null && 'price' in resp ? (resp as any).price: resp;
         row.price = Number(priceValue) || 0;

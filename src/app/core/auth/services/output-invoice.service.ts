@@ -35,14 +35,14 @@ export class OutputInvoiceService {
   createOutputInvoice(payload: OutputInvoiceRequest): Observable<any> {
     if (!this.authService.isLoggedIn()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
-      this.http.post(`${this.outputUrl}/add-input-invoice`, payload)
+      this.http.post(`${this.outputUrl}/add-output-invoice`, payload)
     );
   }
 
   updateOutputInvoice(id: number, payload: OutputInvoiceRequest): Observable<any> {
     if (!this.authService.isLoggedIn()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
-      this.http.put(`${this.outputUrl}/update-input-invoice/${id}`, payload)
+      this.http.put(`${this.outputUrl}/update-output-invoice/${id}`, payload)
     );
   }
 }
