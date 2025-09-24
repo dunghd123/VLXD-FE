@@ -19,7 +19,7 @@ import { ReportsOutputComponent } from './features/manager/reports/output/output
 import { ReportsRevenueComponent } from './features/manager/reports/revenue/revenue.component';
 import { ProductsComponent as EmployeeProductsComponent } from './features/employee/products/products.component';
 import { CustomersComponent as EmployeeCustomersComponent } from './features/employee/customers/customers.component';
-import { OrdersComponent as EmployeeOrdersComponent } from './features/employee/orders/orders.component';
+import { OrdersComponent as EmployeeOrdersComponent } from './features/manager/handle-orders/handle-order.component';
 import { InputOrdersComponent } from './features/employee/input-orders/input-orders.component';
 import { OutputOrdersComponent } from './features/employee/output-orders/output-orders.component';
 import { ProductPriceHistoryComponent } from './features/manager/product-price-history/price-history.component';
@@ -74,6 +74,12 @@ export const routes: Routes = [
         data: { roles: [Role.MANAGER] }
       },
       { 
+        path: 'handle-orders', 
+        component: EmployeeOrdersComponent,
+        canActivate: [RoleGuard],
+        data: { roles: [Role.MANAGER] }
+      },
+      { 
         path: 'reports', 
         component: ReportsComponent,
         canActivate: [RoleGuard],
@@ -113,12 +119,6 @@ export const routes: Routes = [
       { 
         path: 'customers', 
         component: EmployeeCustomersComponent,
-        canActivate: [RoleGuard],
-        data: { roles: [Role.EMPLOYEE] }
-      },
-      { 
-        path: 'orders', 
-        component: EmployeeOrdersComponent,
         canActivate: [RoleGuard],
         data: { roles: [Role.EMPLOYEE] }
       },
