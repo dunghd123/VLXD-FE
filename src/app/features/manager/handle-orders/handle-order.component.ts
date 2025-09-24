@@ -1,6 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { InputOrderResponse, OutputOrderResponse } from './handle-order.model';
+import { InputInvoiceService } from '../../../core/auth/services/input-invoice.service';
+import { OutputInvoiceService } from '../../../core/auth/services/output-invoice.service';
+import { PagedResponse } from '../../../shared/models/pagnition.model';
+import { ToastMessageService } from '../../../shared/services/toast-message.service';
+import { ConfirmModalComponent } from '../../../shared/components/modal/confirm-modal/confirm-modal.component';
+import { ModalService } from '../../../shared/components/modal/modal.service';
+import { ViewInvoiceDetailModalComponent } from './view-detail/view-invoice-detail-modal.component';
 
 @Component({
   selector: 'app-orders',
@@ -9,11 +17,14 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './handle-order.component.html',
   styleUrls: ['./handle-order.component.css'],
 })
-export class HandleOrdersComponent {
+export class HandleOrdersComponent implements OnInit {
   // Tab management
-    activeTab: 'current' | 'history' = 'current';
+    activeTab: 'input' | 'output' = 'input';
   
-    
+    inputInvoiceData: InputOrderResponse[] = [];
+    outputInvoiceData: OutputOrderResponse[] = [];
+  
+    // Loading
     isLoading: boolean = false;
     errorMessage: string = '';
   
@@ -25,148 +36,287 @@ export class HandleOrdersComponent {
   
     // Filter state
     filter = {
-      invoiceType: '',
-      productName: '',
+      searchText: '', // tùy chọn tìm kiếm chung (mã, tên KH/NCC)
       startdate: '',
       enddate: '',
     };
   
     constructor(
-    
+      private inputInvoiceService: InputInvoiceService,
+      private outputInvoiceService: OutputInvoiceService,
+      private toast: ToastMessageService,
+      private modalService: ModalService
     ) {}
   
     ngOnInit(): void {
-      this.loadCurrentPrices();
+      this.loadInputOrders();
     }
-  
-    // Normalize BE item fields (camelCase/snake_case) to UI model
-  
-    private normalizeNumber(value: any): number {
-      if (typeof value === 'number') return value;
-      if (typeof value === 'string') {
-        const trimmed = value.trim().replace(/[,\s]/g, '');
-        const num = Number(trimmed);
-        return isNaN(num) ? 0 : num;
-      }
-      return 0;
-    }
-  
-    // Accepts common formats: dd-MM-yyyy, dd-MM-yyyy HH:mm:ss, dd/MM/yyyy, yyyy-MM-dd, ISO strings
-    private parseDate(value: any): Date | '' {
-      if (!value) return '';
-      if (value instanceof Date) return value;
-      if (typeof value !== 'string') {
-        const d = new Date(value);
-        return isNaN(d.getTime()) ? '' : d;
-      }
-      const v = value.trim();
-      
-      // dd-MM-yyyy HH:mm:ss
-      const dmYTime = /^(\d{2})-(\d{2})-(\d{4})\s+(\d{2}):(\d{2}):(\d{2})$/;
-      // dd-MM-yyyy
-      const dmY = /^(\d{2})-(\d{2})-(\d{4})$/;
-      // dd/MM/yyyy
-      const dmYSlash = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-      // yyyy-MM-dd
-      const yMd = /^(\d{4})-(\d{2})-(\d{2})$/;
-      
-      let m;
-      if ((m = v.match(dmYTime))) {
-        const [, dd, mm, yyyy, hh, min, ss] = m;
-        const d = new Date(Number(yyyy), Number(mm) - 1, Number(dd), Number(hh), Number(min), Number(ss));
-        return isNaN(d.getTime()) ? '' : d;
-      }
-      if ((m = v.match(dmY))) {
-        const [, dd, mm, yyyy] = m;
-        const d = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
-        return isNaN(d.getTime()) ? '' : d;
-      }
-      if ((m = v.match(dmYSlash))) {
-        const [, dd, mm, yyyy] = m;
-        const d = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
-        return isNaN(d.getTime()) ? '' : d;
-      }
-      if (yMd.test(v)) {
-        const d = new Date(v);
-        return isNaN(d.getTime()) ? '' : d;
-      }
-      const d = new Date(v);
-      return isNaN(d.getTime()) ? '' : d;
-    }
-  
+
     // Tab switching methods
-    switchToCurrentPrices(): void {
-      this.activeTab = 'current';
-  
-      this.loadCurrentPrices();
+    switchToInputOrders(): void {
+      this.activeTab = 'input';
+      this.loadInputOrders(0, this.size);
     }
   
-    switchToHistoryPrices(): void {
-      this.activeTab = 'history';
-      this.loadHistoryPrices();
+    switchToOutputOrders(): void {
+      this.activeTab = 'output';
+      this.loadOutputOrders(0, this.size);
     }
   
     applyFilter(): void {
-      if (this.activeTab === 'current') {
-        this.loadCurrentPrices(0, this.size);
+      if (this.activeTab === 'input') {
+        this.loadInputOrders(0, this.size);
       } else {
-        this.loadHistoryPrices(0, this.size);
+        this.loadOutputOrders(0, this.size);
       }
     }
   
     resetFilter(): void {
       this.filter = { 
-        invoiceType: '', 
-        productName: '', 
+        searchText: '', 
         startdate: '', 
         enddate: ''
       };
-      if (this.activeTab === 'current') {
-        this.loadCurrentPrices(0, this.size);
+      if (this.activeTab === 'input') {
+        this.loadInputOrders(0, this.size);
       } else {
-        this.loadHistoryPrices(0, this.size);
+        this.loadOutputOrders(0, this.size);
       }
     }
   
-    loadCurrentPrices(page?: number, size?: number): void {
-    }
-  
-    loadHistoryPrices(page?: number, size?: number): void {
-      
-    }
+
     setPage(page: number): void {
       if (page < 0) return;
-      if (this.activeTab === 'current') {
-        this.loadCurrentPrices(page, this.size);
+      if (this.activeTab === 'input') {
+        this.loadInputOrders(page, this.size);
       } else {
-        this.loadHistoryPrices(page, this.size);
+        this.loadOutputOrders(page, this.size);
       }
     }
   
     nextPage(): void {
       if (this.page + 1 >= this.totalPages) return;
-      if (this.activeTab === 'current') {
-        this.loadCurrentPrices(this.page + 1, this.size);
+      if (this.activeTab === 'input') {
+        this.loadInputOrders(this.page + 1, this.size);
       } else {
-        this.loadHistoryPrices(this.page + 1, this.size);
+        this.loadOutputOrders(this.page + 1, this.size);
       }
     }
   
     prevPage(): void {
       if (this.page === 0) return;
-      if (this.activeTab === 'current') {
-        this.loadCurrentPrices(this.page - 1, this.size);
+      if (this.activeTab === 'input') {
+        this.loadInputOrders(this.page - 1, this.size);
       } else {
-        this.loadHistoryPrices(this.page - 1, this.size);
+        this.loadOutputOrders(this.page - 1, this.size);
       }
     }
   
     setPageSize(size: number): void {
       if (size <= 0) return;
-      if (this.activeTab === 'current') {
-        this.loadCurrentPrices(0, size);
+      if (this.activeTab === 'input') {
+        this.loadInputOrders(0, size);
       } else {
-        this.loadHistoryPrices(0, size);
+        this.loadOutputOrders(0, size);
       }
+    }
+
+    private normalizeNumber(value: any): number {
+      if (typeof value === 'number') return value;
+      if (typeof value === 'string') {
+        const trimmed = value.trim().replace(/[\s,]/g, '');
+        const num = Number(trimmed);
+        return isNaN(num) ? 0 : num;
+      }
+      return 0;
+    }
+
+    private mapToInputOrder(item: any): InputOrderResponse {
+      return {
+        id: item.id,
+        code: item.code ?? item.invoiceCode ?? '',
+        supName: item.supName ?? item.supplierName ?? '',
+        creationTime: item.creationTime ?? item.createdAt ?? item.creation_time ?? '',
+        status: item.status ?? '',
+        listInputInvoiceDetails: (item.listInvoiceDetails ?? item.listInputInvoiceDetails ?? []).map((d: any) => ({
+          id: d.id,
+          productName: d.productName ?? d.proName ?? '',
+          unitMeasure: d.unitMeasure ?? d.unit ?? '',
+          quantity: this.normalizeNumber(d.quantity),
+          price: this.normalizeNumber(d.price),
+          amount: this.normalizeNumber(d.amount),
+          warehouseName: d.warehouseName ?? d.whName ?? ''
+        })),
+        totalAmount: this.normalizeNumber(item.totalAmount)
+      } as InputOrderResponse;
+    }
+
+    private mapToOutputOrder(item: any): OutputOrderResponse {
+      return {
+        id: item.id,
+        code: item.code ?? item.invoiceCode ?? '',
+        cusName: item.cusName ?? item.customerName ?? '',
+        creationTime: item.creationTime ?? item.createdAt ?? item.creation_time ?? '',
+        shipAddress: item.shipAddress ?? item.address ?? undefined,
+        status: item.status ?? '',
+        listOutputInvoiceDetails: (item.listOutputInvoiceDetails ?? item.listInvoiceDetails ?? []).map((d: any) => ({
+          id: d.id,
+          productName: d.productName ?? d.proName ?? '',
+          unitMeasure: d.unitMeasure ?? d.unit ?? '',
+          quantity: this.normalizeNumber(d.quantity),
+          price: this.normalizeNumber(d.price),
+          amount: this.normalizeNumber(d.amount),
+          warehouseName: d.warehouseName ?? d.whName ?? ''
+        })),
+        totalAmount: this.normalizeNumber(item.totalAmount)
+      } as OutputOrderResponse;
+    }
+
+    loadInputOrders(page?: number, size?: number): void {
+      if (typeof page === 'number') this.page = page;
+      if (typeof size === 'number') this.size = size;
+
+      this.isLoading = true;
+      this.errorMessage = '';
+
+      this.inputInvoiceService.loadPendingInputInvoice(this.page, this.size).subscribe({
+        next: (res: PagedResponse<any>) => {
+          const content = Array.isArray(res.content) ? res.content : [];
+          this.inputInvoiceData = content.map((it: any) => this.mapToInputOrder(it));
+          this.totalPages = res.page?.totalPages ?? 0;
+          this.totalElements = res.page?.totalElements ?? 0;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.isLoading = false;
+          if (error.status === 403) this.errorMessage = 'Access denied: Bạn không có quyền truy cập.';
+          else if (error.status === 401) this.errorMessage = 'Unauthorized: Vui lòng đăng nhập lại.';
+          else if (error.status === 0) this.errorMessage = 'Lỗi mạng: Không thể kết nối máy chủ.';
+          else this.errorMessage = error?.message || 'Đã xảy ra lỗi không xác định';
+        }
+      });
+    }
+
+    loadOutputOrders(page?: number, size?: number): void {
+      if (typeof page === 'number') this.page = page;
+      if (typeof size === 'number') this.size = size;
+
+      this.isLoading = true;
+      this.errorMessage = '';
+
+      this.outputInvoiceService.loadPendingOutputInvoice(this.page, this.size).subscribe({
+        next: (res: PagedResponse<any>) => {
+          const content = Array.isArray(res.content) ? res.content : [];
+          this.outputInvoiceData = content.map((it: any) => this.mapToOutputOrder(it));
+          this.totalPages = res.page?.totalPages ?? 0;
+          this.totalElements = res.page?.totalElements ?? 0;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.isLoading = false;
+          if (error.status === 403) this.errorMessage = 'Access denied: Bạn không có quyền truy cập.';
+          else if (error.status === 401) this.errorMessage = 'Unauthorized: Vui lòng đăng nhập lại.';
+          else if (error.status === 0) this.errorMessage = 'Lỗi mạng: Không thể kết nối máy chủ.';
+          else this.errorMessage = error?.message || 'Đã xảy ra lỗi không xác định';
+        }
+      });
+    }
+    openConfirmAprove(invoice: InputOrderResponse | OutputOrderResponse){
+       const modalRef = this.modalService.open(ConfirmModalComponent, {
+            size: 'sm',
+            position: 'center',
+            data: {
+              title: 'Xác nhận chấp thuận đơn hàng',
+              message: `Bạn muốn chấp nhận đơn hàng: "${invoice.id} - ${invoice.code}"?`,
+              confirmText: 'Yes',
+              cancelText: 'No',
+              danger: true,
+              iconClass: 'fa-trash-alt'
+            }
+          });
+      
+          const instance: any = modalRef.instance;
+          if (instance && instance.confirm) {
+            instance.confirm.subscribe(() => this.approveInvoice(invoice.id));
+          }
+    }
+  openConfirmReject(invoice: InputOrderResponse | OutputOrderResponse){
+       const modalRef = this.modalService.open(ConfirmModalComponent, {
+            size: 'sm',
+            position: 'center',
+            data: {
+              title: 'Xác nhận hủy đơn hàng',
+              message: `Bạn muốn hủy đơn hàng: "${invoice.id} - ${invoice.code}"?`,
+              confirmText: 'Yes',
+              cancelText: 'No',
+              danger: true,
+              iconClass: 'fa-trash-alt'
+            }
+          });
+      
+          const instance: any = modalRef.instance;
+          if (instance && instance.confirm) {
+            instance.confirm.subscribe(() => this.rejectInvoice(invoice.id));
+          }
+    }
+    approveInvoice(id: number): void {
+      if(this.activeTab === 'input') {
+        this.inputInvoiceService.aproveInputInvoice(id).subscribe({
+          next: (res: any) => {
+            this.loadInputOrders(this.page, this.size),
+            this.toast.showSuccess('Thành công', res.message);
+          },
+          error: (error) => {
+            this.toast.showError('Thất bại', error.message);
+            this.loadInputOrders(this.page, this.size)
+          }
+        });
+      }else {
+        this.outputInvoiceService.aproveOutputInvoice(id).subscribe({
+         next: (res: any) => {
+            this.loadInputOrders(this.page, this.size),
+            this.toast.showSuccess('Thành công', res.message);
+          },
+          error: (error) => {
+            this.toast.showError('Thất bại', error.message);
+            this.loadInputOrders(this.page, this.size)
+          }
+      });
+      }
+    }
+    rejectInvoice(id: number): void {
+      if(this.activeTab === "input"){
+        this.inputInvoiceService.rejectInputInvoice(id).subscribe({
+          next: (res: any) => {
+            this.loadInputOrders(this.page, this.size),
+            this.toast.showSuccess('Thành công', res.message);
+          },
+          error: (error) => {
+            this.toast.showError('Thất bại', error.message);
+            this.loadInputOrders(this.page, this.size)
+          }
+        });
+      }else {
+        this.outputInvoiceService.rejectOutputInvoice(id).subscribe({
+          next: (res: any) => {
+            this.loadInputOrders(this.page, this.size),
+            this.toast.showSuccess('Thành công', res.message);
+          },
+          error: (error) => {
+            this.toast.showError('Thất bại', error.message);
+            this.loadInputOrders(this.page, this.size)
+          }
+        });
+      }
+    }
+    openViewDetailInvoice(invoice: InputOrderResponse | OutputOrderResponse) {
+      const modalRef = this.modalService.open(ViewInvoiceDetailModalComponent, {
+        size: 'md',
+        position: 'center',
+        data: {
+          invoice: invoice,
+          activeTab: this.activeTab
+        }
+      });
     }
 }

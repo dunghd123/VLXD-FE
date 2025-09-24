@@ -1,88 +1,25 @@
 <div class="order-page">
   <div class="page-header">
-    <h2>Quản lý giá VLXD</h2>
-    <p>Theo dõi và quản lý lịch sử giá sản phẩm vật liệu xây dựng</p>
-  </div>
-  
-  <!-- Filter Section -->
-  <div class="filter-section">
-    <div class="filter-card">
-      <form class="filter-form">
-        <div class="filter-row">
-          <div class="filter-group">
-            <label>Loại hóa đơn</label>
-            <select [(ngModel)]="filter.invoiceType" name="invoiceType" class="form-select">
-              <option value="">-- Tất cả loại --</option>
-              <option value="OUTPUT">Xuất</option>
-              <option value="INPUT">Nhập</option>
-            </select>
-          </div>
-
-          <div class="filter-group">
-            <label>Tên sản phẩm</label>
-            <input type="text"
-                   class="form-input"
-                   placeholder="Nhập tên sản phẩm..."
-                   [(ngModel)]="filter.productName"
-                   name="productName">
-          </div>
-
-          <div class="filter-group">
-            <label>Từ ngày</label>
-            <input type="datetime-local" class="form-input" [(ngModel)]="filter.startdate" name="startdate">
-          </div>
-
-          <div class="filter-group">
-            <label>Đến ngày</label>
-            <input type="datetime-local" class="form-input" [(ngModel)]="filter.enddate" name="enddate">
-          </div>
-            <div class="filter-group filter-buttons">
-              <button type="button" class="btn-primary" (click)="applyFilter()" title="Tìm kiếm">
-                <i class="fas fa-search"></i>
-              </button>
-              <button type="button" class="btn-secondary" (click)="resetFilter()" title="Làm mới">
-                <i class="fas fa-refresh"></i>
-              </button>
-            </div>
-        </div>
-      </form>
-    </div>
+    <h2>Xử lý hóa đơn</h2>
+    <p>Xử lý đơn hàng mới và cập nhật trạng thái</p>
   </div>
 
   <!-- Tab Buttons -->
   <div class="tab-buttons">
     <button 
       class="tab-button" 
-      [ngClass]="{'active': activeTab === 'current'}"
-      (click)="switchToCurrentPrices()">
-      <i class="fas fa-clock"></i>
-      <span>Giá hiện tại</span>
+      [ngClass]="{'active': activeTab === 'input'}"
+      (click)="switchToInputOrders()">
+      <i class="fas fa-file-import"></i>
+      <span>Hóa đơn nhập</span>
     </button>
     <button 
       class="tab-button" 
-      [ngClass]="{'active': activeTab === 'history'}"
-      (click)="switchToHistoryPrices()">
-      <i class="fas fa-history"></i>
-      <span>Giá cũ</span>
+      [ngClass]="{'active': activeTab === 'output'}"
+      (click)="switchToOutputOrders()">
+      <i class="fas fa-file-export"></i>
+      <span>Hóa đơn xuất</span>
     </button>
-  </div>
-
-  <!-- Actions -->
-  <div class="actions">
-    <button class="btn-primary" >
-      <i class="fas fa-plus"></i>
-      <span>Thêm giá mới</span>
-    </button>
-    <button class="btn-outline" >
-      <i class="fas fa-file-excel"></i>
-      <span>Xuất Excel</span>
-    </button>
-  </div>
-
-  <!-- Results Info -->
-  <div class="search-results-info" >
-    <i class="fas fa-info-circle"></i>
-    <span>Tìm thấy {{ totalElements }} bản ghi giá sản phẩm (trang {{ page + 1 }}/{{ totalPages }})</span>
   </div>
 
   <!-- Table -->
@@ -91,37 +28,87 @@
       <table>
         <thead>
           <tr>
-            <th>Tên sản phẩm</th>
-            <th>Loại hóa đơn</th>
-            <th class="price-column">Giá</th>
-            <th>Ngày bắt đầu</th>
-            <th>Ngày kết thúc</th>
-            <th>Thao tác</th>
+            <ng-container *ngIf="activeTab === 'input'; else outputHeader">
+              <th>Mã HĐ</th>
+              <th>Ngày tạo</th>
+              <th>Trạng thái</th>
+              <th class="price-column">Tổng tiền</th>
+              <th>Thao tác</th>
+            </ng-container>
+            <ng-template #outputHeader>
+              <th>Mã HĐ</th>
+              <th>Ngày tạo</th>
+              <th>Trạng thái</th>
+              <th class="price-column">Tổng tiền</th>
+              <th>Thao tác</th>
+            </ng-template>
           </tr>
         </thead>
         <tbody>
-          <!-- <tr *ngFor="let item of priceHistoryData">
-            <td class="product-name">{{ item.productName }}</td>
-            <td>
-              <span class="invoice-type" [ngClass]="item.invoiceType === 'OUTPUT' ? 'export' : 'import'">
-                {{ item.invoiceType === 'OUTPUT' ? 'Xuất' : 'Nhập' }}
-              </span>
-            </td>
-            <td class="price-value">{{ item.price }} / {{ item.unitMeasure}}</td>
-            <td>{{ item.startDate | date:'dd/MM/yyyy HH:mm:ss' }}</td>
-            <td>{{ item.endDate | date:'dd/MM/yyyy HH:mm:ss' }}</td>
-            <td>
-              <i class="fas fa-edit btn-edit" title="Sửa" ></i>
-            </td>
-          </tr> -->
+          <ng-container *ngIf="activeTab === 'input'; else outputBody">
+            <tr *ngFor="let item of inputInvoiceData">
+              <td class="code">{{ item.code }}</td>
+              <td>{{ item.creationTime | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+              <td>
+                <span class="status" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span>
+              </td>
+              <td class="price-column">{{ item.totalAmount | number }}</td>
+              <td class="action-cell">
+                <div class="action-buttons">
+                  <button type="button" class="btn-viewDetail" title="Chi tiết" (click)="openViewDetailInvoice(item)">
+                    <i class="fas fa-eye"></i>
+                    <span>Chi tiết</span>
+                  </button>
+                  <button type="button" class="btn-approve" title="Chấp thuận" (click)="openConfirmAprove(item)">
+                    <i class="fas fa-check"></i>
+                    <span>Chấp thuận</span>
+                  </button>
+                  <button type="button" class="btn-cancel" title="Hủy" (click)=" openConfirmReject(item)">
+                    <i class="fas fa-times"></i>
+                    <span>Hủy</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+          <ng-template #outputBody>
+            <tr *ngFor="let item of outputInvoiceData">
+              <td class="code">{{ item.code }}</td>
+              <td>{{ item.creationTime | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+              <td>
+                <span class="status" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span>
+              </td>
+              <td class="price-column">{{ item.totalAmount | number }}</td>
+              <td class="action-cell">
+                <div class="action-buttons">
+                  <button type="button" class="btn-viewDetail" title="Chi tiết"  (click)="openViewDetailInvoice(item)">
+                    <i class="fas fa-eye"></i>
+                    <span>Chi tiết</span>
+                  </button>
+                  <button type="button" class="btn-approve" title="Chấp thuận" (click)="openConfirmAprove(item)">
+                    <i class="fas fa-check"></i>
+                    <span>Chấp thuận</span>
+                  </button>
+                  <button type="button" class="btn-cancel" title="Hủy" (click)=" openConfirmReject(item)">
+                    <i class="fas fa-times"></i>
+                    <span>Hủy</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
         </tbody>
       </table>
     </div>
 
-    <!-- <div *ngIf="priceHistoryData.length === 0 && !isLoading && !errorMessage" class="empty-state">
-      <i class="fas fa-chart-line"></i>
-      <p>Không có dữ liệu giá sản phẩm</p>
-    </div> -->
+    <div *ngIf="activeTab==='input' && inputInvoiceData.length === 0 && !isLoading && !errorMessage" class="empty-state">
+      <i class="fas fa-receipt"></i>
+      <p>Không có hóa đơn nhập</p>
+    </div>
+    <div *ngIf="activeTab==='output' && outputInvoiceData.length === 0 && !isLoading && !errorMessage" class="empty-state">
+      <i class="fas fa-receipt"></i>
+      <p>Không có hóa đơn xuất</p>
+    </div>
 
     <!-- Pagination -->
     <div class="pagination">
@@ -156,7 +143,7 @@
   <div *ngIf="errorMessage" class="error-message">
     <i class="fas fa-exclamation-triangle"></i>
     <span>{{ errorMessage }}</span>
-    <button class="btn-retry" (click)="loadHistoryPrices()">
+    <button class="btn-retry" (click)="activeTab==='input' ? loadInputOrders() : loadOutputOrders()">
       <i class="fas fa-redo"></i>
       Thử lại
     </button>

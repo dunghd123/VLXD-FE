@@ -1,7 +1,11 @@
 export interface InputOrderResponse{
     id: number,
-    name: string,
-    price: number
+    code: string,
+    supName: string
+    creationTime:string,
+    status: string,
+    listInputInvoiceDetails: InputOrderDetailResponse[],
+    totalAmount: number
 }
 export interface InputOrderDetailResponse{
     id: number,
@@ -14,8 +18,13 @@ export interface InputOrderDetailResponse{
 }
 export interface OutputOrderResponse{
     id: number,
-    name: string,
-    price: number
+    code: string,
+    cusName: string
+    creationTime:string,
+    shipAddress?: string,
+    status: string,
+    listOutputInvoiceDetails: OutputOrderDetailResponse[],
+    totalAmount: number
 }
 export interface OutputOrderDetailResponse{
     id: number,

@@ -31,6 +31,30 @@ export class InputInvoiceService {
       this.http.get<PagedResponse<InputInvoiceResponse>>(`${this.inputUrl}/getAllInputInvoiceByEmp/${this.authService.getCurrentUser()?.username}`, { params })
     );
   }
+  loadPendingInputInvoice(page: number, size: number): Observable<PagedResponse<InputInvoiceResponse>> {
+    if (!this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+      this.http.get<PagedResponse<InputInvoiceResponse>>(`${this.inputUrl}/getAllPendingInputInvoiceByEmp/${this.authService.getCurrentUser()?.username}?page=${page}&size=${size}`)
+    );
+  }
+  aproveInputInvoice(id: number): Observable<any> {
+    if (!this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+      this.http.put(`${this.inputUrl}/approve-input-invoice/${id}`, null)
+    );
+  }
+  rejectInputInvoice(id: number): Observable<any> {
+    if (!this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+      this.http.put(`${this.inputUrl}/reject-input-invoice/${id}`, null)
+    );
+  }
+  completeInputInvoice(id: number): Observable<any> {
+    if (!this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+      this.http.put(`${this.inputUrl}/complete-input-invoice/${id}`, null)
+    );
+  }
 
   createInputInvoice(payload: InputInvoiceRequest): Observable<any> {
     if (!this.authService.isLoggedIn()) throw new Error('Access denied');
