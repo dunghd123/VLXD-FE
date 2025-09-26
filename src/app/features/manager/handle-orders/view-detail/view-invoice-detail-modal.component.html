@@ -4,6 +4,16 @@
     <button type="button" class="close-btn" (click)="closeModal()" aria-label="Đóng" title="Đóng">×</button>
   </div>
   <div class="dialog-body">
+    <div class="invoice-meta-row">
+      <div class="meta-item">
+        <span class="meta-label">Nhân viên tạo hóa đơn:</span>
+        <span class="meta-value">{{ data?.invoice?.empName }}</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">{{ activeTab === 'input' ? 'Nhà cung cấp' : 'Khách hàng' }}:</span>
+        <span class="meta-value">{{ activeTab === 'input' ? (data?.invoice?.supName || '-') : (data?.invoice?.cusName || '-') }}</span>
+      </div>
+    </div>
     <div class="table-container">
       <table>
         <thead>

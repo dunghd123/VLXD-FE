@@ -1,5 +1,6 @@
 export interface InputOrderResponse{
     id: number,
+    empName: string,
     code: string,
     supName: string
     creationTime:string,
@@ -19,7 +20,8 @@ export interface InputOrderDetailResponse{
 export interface OutputOrderResponse{
     id: number,
     code: string,
-    cusName: string
+    cusName: string,
+    empName: string,
     creationTime:string,
     shipAddress?: string,
     status: string,

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { InputOrderResponse, OutputOrderResponse } from './handle-order.model';
@@ -9,6 +9,7 @@ import { ToastMessageService } from '../../../shared/services/toast-message.serv
 import { ConfirmModalComponent } from '../../../shared/components/modal/confirm-modal/confirm-modal.component';
 import { ModalService } from '../../../shared/components/modal/modal.service';
 import { ViewInvoiceDetailModalComponent } from './view-detail/view-invoice-detail-modal.component';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-orders',
@@ -17,7 +18,7 @@ import { ViewInvoiceDetailModalComponent } from './view-detail/view-invoice-deta
   templateUrl: './handle-order.component.html',
   styleUrls: ['./handle-order.component.css'],
 })
-export class HandleOrdersComponent implements OnInit {
+export class HandleOrdersComponent implements OnInit, OnDestroy {
   // Tab management
     activeTab: 'input' | 'output' = 'input';
   
@@ -40,6 +41,7 @@ export class HandleOrdersComponent implements OnInit {
       startdate: '',
       enddate: '',
     };
+    private autoRefreshSubscription?: Subscription;
   
     constructor(
       private inputInvoiceService: InputInvoiceService,
@@ -50,6 +52,20 @@ export class HandleOrdersComponent implements OnInit {
   
     ngOnInit(): void {
       this.loadInputOrders();
+      this.autoRefreshSubscription = interval(30000).subscribe(() => {
+        if (this.isLoading) return;
+        if (this.activeTab === 'input') {
+          this.loadInputOrders(this.page, this.size);
+        } else {
+          this.loadOutputOrders(this.page, this.size);
+        }
+      });
+    }
+
+    ngOnDestroy(): void {
+      if (this.autoRefreshSubscription) {
+        this.autoRefreshSubscription.unsubscribe();
+      }
     }
 
     // Tab switching methods
@@ -136,6 +152,7 @@ export class HandleOrdersComponent implements OnInit {
         id: item.id,
         code: item.code ?? item.invoiceCode ?? '',
         supName: item.supName ?? item.supplierName ?? '',
+        empName: item.empName ?? item.employeeName ?? '',
         creationTime: item.creationTime ?? item.createdAt ?? item.creation_time ?? '',
         status: item.status ?? '',
         listInputInvoiceDetails: (item.listInvoiceDetails ?? item.listInputInvoiceDetails ?? []).map((d: any) => ({
@@ -156,6 +173,7 @@ export class HandleOrdersComponent implements OnInit {
         id: item.id,
         code: item.code ?? item.invoiceCode ?? '',
         cusName: item.cusName ?? item.customerName ?? '',
+        empName: item.empName ?? item.employeeName ?? '',
         creationTime: item.creationTime ?? item.createdAt ?? item.creation_time ?? '',
         shipAddress: item.shipAddress ?? item.address ?? undefined,
         status: item.status ?? '',

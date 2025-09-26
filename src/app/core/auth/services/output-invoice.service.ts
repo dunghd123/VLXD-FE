@@ -34,7 +34,7 @@ export class OutputInvoiceService {
   loadPendingOutputInvoice(page: number, size: number): Observable<PagedResponse<OutputInvoiceResponse>> {
     if (!this.authService.isLoggedIn()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
-      this.http.get<PagedResponse<OutputInvoiceResponse>>(`${this.outputUrl}/getAllPendingOutputInvoiceByEmp/${this.authService.getCurrentUser()?.username}?page=${page}&size=${size}`)
+      this.http.get<PagedResponse<OutputInvoiceResponse>>(`${this.outputUrl}/getAllPendingOutputInvoiceByEmp?page=${page}&size=${size}`)
     );
   }
   aproveOutputInvoice(id: number): Observable<any> {

@@ -61,6 +61,30 @@
   max-height: calc(100vh - 200px); /* Prevent overflow */
 }
 
+/* Meta info row */
+.invoice-meta-row {
+  display: flex;
+  gap: 24px;
+  padding: 16px 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.invoice-meta-row .meta-item {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.invoice-meta-row .meta-label {
+  color: #000000;
+  font-weight: 600;
+}
+
+.invoice-meta-row .meta-value {
+  color: #333;
+}
+
 /* Table Container */
 .table-container {
   overflow-x: auto;

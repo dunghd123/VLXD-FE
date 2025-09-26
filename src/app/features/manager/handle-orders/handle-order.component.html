@@ -12,6 +12,9 @@
       (click)="switchToInputOrders()">
       <i class="fas fa-file-import"></i>
       <span>Hóa đơn nhập</span>
+      <span class="total-badge" *ngIf="activeTab === 'input'">
+        {{ totalElements == null ? 0 : totalElements }}
+      </span>
     </button>
     <button 
       class="tab-button" 
@@ -19,6 +22,9 @@
       (click)="switchToOutputOrders()">
       <i class="fas fa-file-export"></i>
       <span>Hóa đơn xuất</span>
+      <span class="total-badge" *ngIf="activeTab === 'output'">
+        {{ totalElements == null ? 0 : totalElements }}
+      </span>
     </button>
   </div>
 
