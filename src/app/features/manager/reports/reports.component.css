@@ -20,17 +20,7 @@
   display: flex;
   gap: 1rem;
   width: 100%;
-}
-
-.row-top {
-  justify-content: space-between;
-  flex-wrap: nowrap;
-}
-
-.row-bottom {
-  justify-content: flex-start;
   align-items: end;
-  flex-wrap: nowrap;
 }
 
 .filter-group {
@@ -41,25 +31,17 @@
   min-width: 0;
 }
 
-/* Prevent wrapping: ensure three columns fit */
-.row-top .filter-group {
-  flex: 0 0 calc((100% - 2rem) / 3); /* 3 columns with gaps (2 x 1rem) */
-}
-
-.row-bottom .filter-group {
-  flex: 0 0 calc((100% - 2rem) / 3);
-}
-
-.row-bottom .filter-buttons {
+.filter-buttons {
   display: flex;
   flex-direction: row;
   align-items: end;
-  justify-content: flex-end;
+  justify-content: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
 }
 
 @media (max-width: 1024px) {
-  .row-top .filter-group,
-  .row-bottom .filter-group {
+  .filter-group {
     flex: 1 1 100%;
   }
 }

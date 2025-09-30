@@ -1,0 +1,31 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { AuthService } from './auth.service';
+import { SaleReportResponse, SalesEmployeeResponse, SalesCustomerResponse, SalesProductResponse, FilterRequest } from '../../../features/manager/reports/reports.model';
+@Injectable({
+  providedIn: 'root'
+})
+export class ReportService {
+  private reportUrl = 'http://localhost:8081/api/v1/sales-reports';
+
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) {}
+  loadRevenueByEmployee(filter: FilterRequest): Observable<SaleReportResponse<SalesEmployeeResponse>> {
+    if(!this.authService.isManager() || !this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+         this.http.post<SaleReportResponse<SalesEmployeeResponse>>(`${this.reportUrl}/revenue-report`, filter)
+    )};
+  loadRevenueByCustomer(filter: FilterRequest): Observable<SaleReportResponse<SalesCustomerResponse>> {
+    if(!this.authService.isManager() || !this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+        this.http.post<SaleReportResponse<SalesCustomerResponse>>(`${this.reportUrl}/revenue-report`, filter)
+    )};
+  loadRevenueProduct(filter: FilterRequest): Observable<SaleReportResponse<SalesProductResponse>> {
+    if(!this.authService.isManager() || !this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+        this.http.post<SaleReportResponse<SalesProductResponse>>(`${this.reportUrl}/revenue-report`, filter)
+    )};
+}

@@ -1,6 +1,116 @@
-<div class="reports-page">
-  <h2>Thống kê doanh thu</h2>
-  
+<div class="revenue-container">
+  <h3 class="page-title">Báo cáo Doanh thu</h3>
+
+  <!-- Employee Revenue Section -->
+  <div class="chart-section">
+    <h4 class="section-title">Doanh thu theo Nhân viên</h4>
+    <div class="summary-row">
+      <div class="summary-card">
+        <h4>Tổng doanh thu</h4>
+        <p class="value">{{ employeeSummary.totalRevenue| number:'1.0-0' }} VND</p>
+      </div>
+      <div class="summary-card">
+        <h4>Số hóa đơn</h4>
+        <p class="value">{{ employeeSummary.recordCount }}</p>
+      </div>
+    </div>
+
+    <div class="chart-wrapper">
+      <canvasjs-chart [options]="chartOptions"></canvasjs-chart>
+    </div>
+
+    <!-- Employee Details Table -->
+    <table class="table table-bordered mt-3">
+      <thead class="table-primary">
+        <tr>
+          <th>Nhân viên</th>
+          <th>Doanh thu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of employeeDetails">
+          <td>{{ d.empName }}</td>
+          <td>{{ d.totalAmount | number:'1.0-0' }} VND</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Customer Revenue Section -->
+  <div class="chart-section">
+    <h4 class="section-title">Doanh thu theo Khách hàng</h4>
+    
+    <!-- Customer Summary -->
+    <div class="summary-row">
+      <div class="summary-card">
+        <h4>Tổng doanh thu</h4>
+        <p class="value">{{ customerSummary.totalRevenue | number:'1.0-0' }} VND</p>
+      </div>
+      <div class="summary-card">
+        <h4>Số khách hàng</h4>
+        <p class="value">{{ customerSummary.recordCount }}</p>
+      </div>
+    </div>
+
+    <!-- Customer Chart -->
+    <div class="chart-wrapper">
+      <canvasjs-chart [options]="customerChartOptions"></canvasjs-chart>
+    </div>
+
+    <!-- Customer Details Table -->
+    <table class="table table-bordered mt-3">
+      <thead class="table-primary">
+        <tr>
+          <th>Khách hàng</th>
+          <th>Doanh thu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of customerDetails">
+          <td>{{ d.cusName }}</td>
+          <td>{{ d.totalAmount | number:'1.0-0' }} VND</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Product Revenue Section -->
+  <div class="chart-section">
+    <h4 class="section-title">Doanh thu theo Sản phẩm</h4>
+    
+    <!-- Product Summary -->
+    <div class="summary-row">
+      <div class="summary-card">
+        <h4>Tổng doanh thu</h4>
+        <p class="value">{{ productSummary.totalRevenue | number:'1.0-0' }} VND</p>
+      </div>
+      <div class="summary-card">
+        <h4>Số sản phẩm</h4>
+        <p class="value">{{ productSummary.recordCount }}</p>
+      </div>
+    </div>
+
+    <!-- Product Chart -->
+    <div class="chart-wrapper">
+      <canvasjs-chart [options]="productChartOptions"></canvasjs-chart>
+    </div>
+
+    <!-- Product Details Table -->
+    <table class="table table-bordered mt-3">
+      <thead class="table-primary">
+        <tr>
+          <th>Sản phẩm</th>
+          <th>Số lượng</th>
+          <th>Doanh thu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of productDetails">
+          <td>{{ d.proName }}</td>
+          <td>{{ d.quantity }}</td>
+          <td>{{ d.totalAmount | number:'1.0-0' }} VND</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
-
-

@@ -62,7 +62,7 @@
             <td>{{ item.creationTime | date:'dd/MM/yyyy HH:mm:ss' }}</td>
             <td>{{ item.updateTime | date:'dd/MM/yyyy HH:mm:ss' }}</td>
             <td class="status">{{ item.status | statusTranslate}} </td>
-            <td>{{ item.shipAddress }}</td>
+            <td>{{ item.shipAddress !== "" ? item.shipAddress : '(No delivery address)' }}</td>
             <td class="price-value">{{ item.totalAmount | currencyPipe}}</td>
             <td>
               <i class="fas fa-eye btn-view" title="Xem chi tiết" (click)="openViewOutputInvoiceDetailModal(item)"></i>

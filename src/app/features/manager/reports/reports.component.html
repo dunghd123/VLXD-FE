@@ -1,50 +1,21 @@
 <div class="filter-section">
   <div class="filter-card">
     <form class="filter-form">
-      <div class="filter-row row-top">
-        <div class="filter-group">
-          <label>Loại hóa đơn</label>
-          <select class="form-select">
-            <option value="">Tất cả</option>
-            <option value="IMPORT">Nhập</option>
-            <option value="EXPORT">Xuất</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label>Sản phẩm</label>
-          <select class="form-select">
-            <option value="">Tất cả</option>
-            <option value="SP1">SP 1</option>
-            <option value="SP2">SP 2</option>
-          </select>
-        </div>
-
-        <div class="filter-group">
-          <label>Loại giá</label>
-          <select class="form-select">
-            <option value="">Hiện tại</option>
-            <option value="HISTORY">Lịch sử</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="filter-row row-bottom">
+      <div class="filter-row">
         <div class="filter-group">
           <label>Từ ngày</label>
-          <input type="datetime-local" class="form-input" />
+          <input type="date" class="form-input" [(ngModel)]="startDateInput" name="startDate"/>
         </div>
 
         <div class="filter-group">
           <label>Đến ngày</label>
-          <input type="datetime-local" class="form-input" />
+          <input type="date" class="form-input" [(ngModel)]="endDateInput" name="endDate"/>
         </div>
-
         <div class="filter-group filter-buttons">
-          <button type="button" class="btn-primary" title="Tìm kiếm">
+          <button type="button" class="btn-primary" title="Tìm kiếm" (click)="applyFilter()">
             <i class="fas fa-search"></i>
           </button>
-          <button type="button" class="btn-secondary" title="Làm mới">
+          <button type="button" class="btn-secondary" title="Làm mới" (click)="resetFilter()">
             <i class="fas fa-refresh"></i>
           </button>
         </div>
