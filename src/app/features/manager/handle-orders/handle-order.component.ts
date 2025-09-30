@@ -34,13 +34,7 @@ export class HandleOrdersComponent implements OnInit, OnDestroy {
     size: number = 10;
     totalElements: number = 0;
     totalPages: number = 0;
-  
-    // Filter state
-    filter = {
-      searchText: '', // tùy chọn tìm kiếm chung (mã, tên KH/NCC)
-      startdate: '',
-      enddate: '',
-    };
+    
     private autoRefreshSubscription?: Subscription;
   
     constructor(
@@ -86,21 +80,6 @@ export class HandleOrdersComponent implements OnInit, OnDestroy {
         this.loadOutputOrders(0, this.size);
       }
     }
-  
-    resetFilter(): void {
-      this.filter = { 
-        searchText: '', 
-        startdate: '', 
-        enddate: ''
-      };
-      if (this.activeTab === 'input') {
-        this.loadInputOrders(0, this.size);
-      } else {
-        this.loadOutputOrders(0, this.size);
-      }
-    }
-  
-
     setPage(page: number): void {
       if (page < 0) return;
       if (this.activeTab === 'input') {
@@ -257,6 +236,7 @@ export class HandleOrdersComponent implements OnInit, OnDestroy {
           if (instance && instance.confirm) {
             instance.confirm.subscribe(() => this.approveInvoice(invoice.id));
           }
+          
     }
   openConfirmReject(invoice: InputOrderResponse | OutputOrderResponse){
        const modalRef = this.modalService.open(ConfirmModalComponent, {
@@ -281,8 +261,8 @@ export class HandleOrdersComponent implements OnInit, OnDestroy {
       if(this.activeTab === 'input') {
         this.inputInvoiceService.aproveInputInvoice(id).subscribe({
           next: (res: any) => {
-            this.loadInputOrders(this.page, this.size),
             this.toast.showSuccess('Thành công', res.message);
+            this.loadInputOrders(this.page, this.size)
           },
           error: (error) => {
             this.toast.showError('Thất bại', error.message);
@@ -292,12 +272,12 @@ export class HandleOrdersComponent implements OnInit, OnDestroy {
       }else {
         this.outputInvoiceService.aproveOutputInvoice(id).subscribe({
          next: (res: any) => {
-            this.loadInputOrders(this.page, this.size),
             this.toast.showSuccess('Thành công', res.message);
+            this.loadOutputOrders(this.page, this.size);
           },
           error: (error) => {
             this.toast.showError('Thất bại', error.message);
-            this.loadInputOrders(this.page, this.size)
+            this.loadOutputOrders(this.page, this.size)
           }
       });
       }
@@ -317,12 +297,12 @@ export class HandleOrdersComponent implements OnInit, OnDestroy {
       }else {
         this.outputInvoiceService.rejectOutputInvoice(id).subscribe({
           next: (res: any) => {
-            this.loadInputOrders(this.page, this.size),
+            this.loadOutputOrders(this.page, this.size),
             this.toast.showSuccess('Thành công', res.message);
           },
           error: (error) => {
             this.toast.showError('Thất bại', error.message);
-            this.loadInputOrders(this.page, this.size)
+            this.loadOutputOrders(this.page, this.size)
           }
         });
       }

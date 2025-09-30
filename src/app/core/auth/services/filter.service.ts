@@ -13,13 +13,13 @@ export class FilterService {
   });
 
   constructor() {
-    // Don't set default filter automatically to avoid infinite loops
+    
   }
 
   getFilter(): Observable<FilterRequest> {
     return this.filterSubject.asObservable();
   }
-  private setDefaultFilter(): void {
+  setDefaultFilter(): void {
     const today = new Date();
 
   const firstDayOfYear = new Date(today.getFullYear(), 0, 1, 0, 0, 0);

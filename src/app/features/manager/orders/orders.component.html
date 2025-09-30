@@ -1,0 +1,150 @@
+<div class="order-page">
+  <div class="page-header">
+    <h2>Quản lý hóa đơn</h2>
+    <p>Quản lý danh sách hóa đơn và cập nhật trạng thái</p>
+  </div>
+
+
+  <!-- Tab Buttons -->
+  <div class="tab-buttons">
+    <button 
+      class="tab-button" 
+      [ngClass]="{'active': activeTab === 'input'}"
+      (click)="switchToInputOrders()">
+      <i class="fas fa-file-import"></i>
+      <span>Hóa đơn nhập</span>
+      <span class="total-badge" *ngIf="activeTab === 'input'">
+        {{ totalElements == null ? 0 : totalElements }}
+      </span>
+    </button>
+    <button 
+      class="tab-button" 
+      [ngClass]="{'active': activeTab === 'output'}"
+      (click)="switchToOutputOrders()">
+      <i class="fas fa-file-export"></i>
+      <span>Hóa đơn xuất</span>
+      <span class="total-badge" *ngIf="activeTab === 'output'">
+        {{ totalElements == null ? 0 : totalElements }}
+      </span>
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="price-table" *ngIf="!isLoading && !errorMessage">
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <ng-container *ngIf="activeTab === 'input'; else outputHeader">
+              <th>Mã HĐ</th>
+              <th>Ngày tạo</th>
+              <th>Trạng thái</th>
+              <th class="price-column">Tổng tiền</th>
+              <th>Thao tác</th>
+            </ng-container>
+            <ng-template #outputHeader>
+              <th>Mã HĐ</th>
+              <th>Ngày tạo</th>
+              <th>Trạng thái</th>
+              <th class="price-column">Tổng tiền</th>
+              <th>Thao tác</th>
+            </ng-template>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="activeTab === 'input'; else outputBody">
+            <tr *ngFor="let item of inputInvoiceData">
+              <td class="code">{{ item.code }}</td>
+              <td>{{ item.creationTime | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+              <td>
+                <span class="status" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span>
+              </td>
+              <td class="price-column">{{ item.totalAmount | number }}</td>
+              <td class="action-cell">
+                <div class="action-buttons">
+                  <button type="button" class="btn-viewDetail" title="Chi tiết" (click)="openViewDetailInvoice(item)">
+                    <i class="fas fa-eye"></i>
+                    <span>Chi tiết</span>
+                  </button>
+                  <button type="button" class="btn-approve" title="Hoàn thành"  *ngIf="item.status === 'APPROVED'" (click)="openConfirmComplete(item)">
+                    <i class="fas fa-check"></i>
+                    <span>Hoàn thành</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+          <ng-template #outputBody>
+            <tr *ngFor="let item of outputInvoiceData">
+              <td class="code">{{ item.code }}</td>
+              <td>{{ item.creationTime | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+              <td>
+                <span class="status" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span>
+              </td>
+              <td class="price-column">{{ item.totalAmount | number }}</td>
+              <td class="action-cell">
+                <div class="action-buttons">
+                  <button type="button" class="btn-viewDetail" title="Chi tiết"  (click)="openViewDetailInvoice(item)">
+                    <i class="fas fa-eye"></i>
+                    <span>Chi tiết</span>
+                  </button>
+                  <button type="button" class="btn-approve" title="Hoàn thành"  *ngIf="item.status === 'APPROVED'" (click)="openConfirmComplete(item)">
+                    <i class="fas fa-check"></i>
+                    <span>Hoàn thành</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="activeTab==='input' && inputInvoiceData.length === 0 && !isLoading && !errorMessage" class="empty-state">
+      <i class="fas fa-receipt"></i>
+      <p>Không có hóa đơn nhập</p>
+    </div>
+    <div *ngIf="activeTab==='output' && outputInvoiceData.length === 0 && !isLoading && !errorMessage" class="empty-state">
+      <i class="fas fa-receipt"></i>
+      <p>Không có hóa đơn xuất</p>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <div class="page-size">
+        <label style="margin-right:8px;">Size:</label>
+        <select [(ngModel)]="size" (ngModelChange)="setPageSize(size)">
+          <option [ngValue]="5">5</option>
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="20">20</option>
+          <option [ngValue]="50">50</option>
+        </select>
+      </div>
+      <div class="page-controls">
+        <button (click)="prevPage()" [disabled]="isLoading || page === 0">
+          <i class="fas fa-chevron-left"></i>  Trước
+        </button>
+         <span> Trang: {{ page + 1 }} / {{ totalPages || 1 }} (tổng: {{ totalElements }}) </span>
+        <button (click)="nextPage()" [disabled]="isLoading || (totalPages > 0 && page + 1 >= totalPages)">
+          Sau <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <i class="fas fa-spinner fa-spin"></i>
+    <span>Đang tải dữ liệu...</span>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="error-message">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>{{ errorMessage }}</span>
+    <button class="btn-retry" (click)="activeTab==='input' ? loadInputOrders() : loadOutputOrders()">
+      <i class="fas fa-redo"></i>
+      Thử lại
+    </button>
+  </div>
+</div>
