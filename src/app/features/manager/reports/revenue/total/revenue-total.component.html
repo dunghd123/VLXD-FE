@@ -7,14 +7,10 @@
         <h4>Tổng doanh thu</h4>
         <p class="value">{{ employeeSummary.totalRevenue| number:'1.0-0' }} VND</p>
       </div>
-      <div class="summary-card">
-        <h4>Số hóa đơn</h4>
-        <p class="value">{{ employeeSummary.recordCount }}</p>
-      </div>
     </div>
 
     <div class="chart-wrapper">
-      <canvasjs-chart [options]="chartOptions"></canvasjs-chart>
+      <canvasjs-chart [options]="employeeChartOptions" (chartInstance)="onEmployeeChartInit($event)"></canvasjs-chart>
     </div>
 
     <!-- Employee Details Table -->
@@ -44,15 +40,11 @@
         <h4>Tổng doanh thu</h4>
         <p class="value">{{ customerSummary.totalRevenue | number:'1.0-0' }} VND</p>
       </div>
-      <div class="summary-card">
-        <h4>Số khách hàng</h4>
-        <p class="value">{{ customerSummary.recordCount }}</p>
-      </div>
     </div>
 
     <!-- Customer Chart -->
     <div class="chart-wrapper">
-      <canvasjs-chart [options]="customerChartOptions"></canvasjs-chart>
+      <canvasjs-chart [options]="customerChartOptions" (chartInstance)="onCustomerChartInit($event)"></canvasjs-chart>
     </div>
 
     <!-- Customer Details Table -->
@@ -82,15 +74,11 @@
         <h4>Tổng doanh thu</h4>
         <p class="value">{{ productSummary.totalRevenue | number:'1.0-0' }} VND</p>
       </div>
-      <div class="summary-card">
-        <h4>Số sản phẩm</h4>
-        <p class="value">{{ productSummary.recordCount }}</p>
-      </div>
     </div>
 
     <!-- Product Chart -->
     <div class="chart-wrapper">
-      <canvasjs-chart [options]="productChartOptions"></canvasjs-chart>
+      <canvasjs-chart [options]="productChartOptions" (chartInstance)="onProductChartInit($event)"></canvasjs-chart>
     </div>
 
     <!-- Product Details Table -->

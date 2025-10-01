@@ -8,7 +8,7 @@ import { PagedResponse } from '../../../shared/models/pagnition.model';
 import { ToastMessageService } from '../../../shared/services/toast-message.service';
 import { ConfirmModalComponent } from '../../../shared/components/modal/confirm-modal/confirm-modal.component';
 import { ModalService } from '../../../shared/components/modal/modal.service';
-import { ViewInvoiceDetailModalComponent } from './view-detail/view-invoice-detail-modal.component';
+import { ViewOrderDetailModalComponent } from './view-detail/view-invoice-detail-modal.component';
 import { interval, Subscription } from 'rxjs';
 
 @Component({
@@ -308,7 +308,7 @@ export class HandleOrdersComponent implements OnInit, OnDestroy {
       }
     }
     openViewDetailInvoice(invoice: InputOrderResponse | OutputOrderResponse) {
-      const modalRef = this.modalService.open(ViewInvoiceDetailModalComponent, {
+      const modalRef = this.modalService.open(ViewOrderDetailModalComponent, {
         size: 'md',
         position: 'center',
         data: {

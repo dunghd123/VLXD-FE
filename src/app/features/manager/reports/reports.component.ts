@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ProductService } from '../../../core/auth/services/product.service';
 import { FilterService } from '../../../core/auth/services/filter.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -25,19 +24,22 @@ import { FilterRequest } from './reports.model';
     MatInputModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatButtonModule],
+    MatButtonModule,
+  ],
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.css']
 })
 export class ReportsComponent implements OnInit {
-filter: FilterRequest = {
-    startDate: '',
-    endDate: '',
-    typeReport: ''
-  };
-
+  filter: FilterRequest = {
+      startDate: '',
+      endDate: '',
+      typeReport: '',
+      year: 0
+    };
   startDateInput: string = '';
   endDateInput: string = '';
+  yearInput: number = 0;
+  activeTab: 'TOTAL' | 'TIME' | 'REGION' = 'TOTAL';
 
   constructor(
     private filterService: FilterService
@@ -45,65 +47,42 @@ filter: FilterRequest = {
 
   ngOnInit(): void {
     this.filter = this.filterService.getCurrentFilter();
-    if (!this.filter.startDate || !this.filter.endDate) {
-      this.setDefaultDates();
-    }
+    this.filterService.getActiveTab().subscribe(tab => {
+      this.activeTab = tab;
+    });
   }
-
-  private setDefaultDates() {
-    const today = new Date();
-    const firstDayOfYear = new Date(today.getFullYear(), 0, 1, 0, 0, 0);
-    const lastDayOfYear = new Date(today.getFullYear(), 11, 31, 23, 59, 59);
-
-    const formatLocalDateTime = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  };
-
-  this.startDateInput = formatLocalDateTime(firstDayOfYear); 
-  this.endDateInput = formatLocalDateTime(lastDayOfYear);  
+  onSubmit(): void {
+    this.applyFilter();
   }
-
   applyFilter() {
-    if (!this.startDateInput || !this.endDateInput) {
+    if (this.activeTab === 'TOTAL' && (!this.startDateInput || !this.endDateInput)) {
       alert('Vui lòng chọn cả ngày bắt đầu và ngày kết thúc');
       return;
     }
-
     const startDate = new Date(this.startDateInput);
     const endDate = new Date(this.endDateInput);
-
     if (startDate > endDate) {
       alert('Ngày bắt đầu không được lớn hơn ngày kết thúc');
       return;
     }
-
-    // set giờ mặc định
     startDate.setHours(0, 0, 0, 0);
     endDate.setHours(23, 59, 59, 999);
 
     const newFilter: FilterRequest = {
       ...this.filter,
       startDate: this.formatDate(startDate),
-      endDate: this.formatDate(endDate)
+      endDate: this.formatDate(endDate),
+      year: this.yearInput !== 0 ? this.yearInput : this.filter.year,
     };
     this.filterService.updateFilter(newFilter);
     this.filter = newFilter; 
   }
 
   resetFilter() {
-    this.setDefaultDates();
-    this.filter = {
-      startDate: '',
-      endDate: '',
-      typeReport: ''
-    };
     this.filterService.resetFilter();
+    this.startDateInput = '';
+    this.endDateInput = '';
+    this.yearInput = 0;
   }
 
 
@@ -115,9 +94,5 @@ filter: FilterRequest = {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  }
-
-  onSubmit(): void {
-    this.applyFilter();
   }
 }

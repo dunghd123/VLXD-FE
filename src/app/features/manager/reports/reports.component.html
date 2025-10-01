@@ -2,14 +2,19 @@
   <div class="filter-card">
     <form class="filter-form">
       <div class="filter-row">
-        <div class="filter-group">
+        <div class="filter-group" *ngIf="activeTab !== 'TIME'">
           <label>Từ ngày</label>
           <input type="date" class="form-input" [(ngModel)]="startDateInput" name="startDate"/>
         </div>
 
-        <div class="filter-group">
+        <div class="filter-group" *ngIf="activeTab !== 'TIME'">
           <label>Đến ngày</label>
           <input type="date" class="form-input" [(ngModel)]="endDateInput" name="endDate"/>
+        </div>
+        <div class="filter-group" *ngIf="activeTab === 'TIME'">
+          <label>Năm</label>
+          <input type="number" class="form-input" [(ngModel)]="yearInput" name="year"
+                min="1900" max="2100" step="1" />
         </div>
         <div class="filter-group filter-buttons">
           <button type="button" class="btn-primary" title="Tìm kiếm" (click)="applyFilter()">
@@ -23,5 +28,4 @@
     </form>
   </div>
 </div>
-
 <router-outlet></router-outlet>

@@ -8,13 +8,13 @@ import { ModalService } from '../../../../shared/components/modal/modal.service'
 
 
 @Component({
-  selector: 'app-view-invoice-detail-modal',
+  selector: 'app-view-order-detail-modal',
   standalone: true,
   imports: [CommonModule, CurrencyPipe],
   templateUrl: './view-invoice-detail-modal.component.html',
   styleUrls: ['./view-invoice-detail-modal.component.css']
 })
-export class ViewInvoiceDetailModalComponent implements OnInit {
+export class ViewOrderDetailModalComponent implements OnInit {
   activeTab: string ="";
   listDetail: InputInvoiceDetailResponse[] | OutputInvoiceDetailResponse[] = [];
   isMobile = false;

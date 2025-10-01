@@ -2,6 +2,7 @@ export interface FilterRequest {
   startDate?: string;
   endDate?: string;
   typeReport?: string; 
+  year?: number
 }
 export interface SaleReportResponse<T> {
   summary: Summary;
@@ -26,5 +27,13 @@ export interface SalesProductResponse{
   proId: number;
   proName: string;
   quantity: number;
+  totalAmount: number;
+}
+export interface SalesMonthResponse{
+  month: number;
+  totalAmount: number;
+}
+export interface SalesQuarterResponse{
+  quarter: number;
   totalAmount: number;
 }

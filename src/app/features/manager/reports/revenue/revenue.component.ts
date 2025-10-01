@@ -18,16 +18,17 @@ import { FilterService } from '../../../../core/auth/services/filter.service';
 })
 export class ReportsRevenueComponent implements OnInit {
   activeTab: 'TOTAL' | 'TIME' | 'REGION' = 'TOTAL';
+
   constructor(
     private filterService: FilterService,
   ) {}
 
   ngOnInit(): void {
-    this.filterService.setDefaultFilter();
+    this.filterService.setActiveTab(this.activeTab);
   }
-  
   switchTab(tab: 'TOTAL' | 'TIME' | 'REGION') {
     this.activeTab = tab;
+    this.filterService.setActiveTab(tab);
   }
 
 }

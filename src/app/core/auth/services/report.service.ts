@@ -2,7 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
-import { SaleReportResponse, SalesEmployeeResponse, SalesCustomerResponse, SalesProductResponse, FilterRequest } from '../../../features/manager/reports/reports.model';
+import { SalesQuarterResponse, 
+        SaleReportResponse, 
+        SalesEmployeeResponse, 
+        SalesCustomerResponse, 
+        SalesProductResponse, 
+        FilterRequest, 
+        SalesMonthResponse 
+} from '../../../features/manager/reports/reports.model';
 @Injectable({
   providedIn: 'root'
 })
@@ -28,4 +35,16 @@ export class ReportService {
     return this.authService.retryWithTokenRefresh(() =>
         this.http.post<SaleReportResponse<SalesProductResponse>>(`${this.reportUrl}/revenue-report`, filter)
     )};
+  loadMonthlyRevenue(year: number): Observable<SaleReportResponse<SalesMonthResponse>> {
+    if(!this.authService.isManager() || !this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+        this.http.post<SaleReportResponse<SalesMonthResponse>>(`${this.reportUrl}/revenue-report-by-month?year=${year}`, null)
+    );
+  }
+  loadQuarterRevenue(year: number): Observable<SaleReportResponse<SalesQuarterResponse>> {
+    if(!this.authService.isManager() || !this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+        this.http.post<SaleReportResponse<SalesQuarterResponse>>(`${this.reportUrl}/revenue-report-by-quarter?year=${year}`, null)
+    );
+  }
 }

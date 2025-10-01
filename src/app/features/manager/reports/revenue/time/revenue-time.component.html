@@ -1,6 +1,31 @@
 <div class="tab-pane">
-  <h4 class="section-title">Doanh thu theo thời gian</h4>
-  <p>Đang phát triển nội dung Doanh thu theo thời gian...</p>
+  <div class="chart-section">
+    <div class="chart-area">
+      <h4 class="section-title">Doanh thu theo thời gian</h4>
+      <div>
+        <div class="summary-row">
+          <div class="summary-card">
+            <h4>Tổng doanh thu</h4>
+            <p class="value">{{ monthSummary.totalRevenue | number:'1.0-0' }} VND</p>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvasjs-chart [options]="monthlyChartOptions" (chartInstance)="onMonthChartInit($event)"></canvasjs-chart>
+        </div>
+      </div>
+      <div>
+        <div class="summary-row">
+          <div class="summary-card">
+            <h4>Tổng doanh thu</h4>
+            <p class="value">{{ quarterSummary.totalRevenue | number:'1.0-0' }} VND</p>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvasjs-chart [options]="quarterChartOptions" (chartInstance)="onQuarterChartInit($event)"></canvasjs-chart>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 
