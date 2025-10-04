@@ -37,3 +37,7 @@ export interface SalesQuarterResponse{
   quarter: number;
   totalAmount: number;
 }
+export interface SalesRegionResponse{
+  region: string;
+  totalAmount: number;
+}

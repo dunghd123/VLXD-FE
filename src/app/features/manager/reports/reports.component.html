@@ -2,16 +2,16 @@
   <div class="filter-card">
     <form class="filter-form">
       <div class="filter-row">
-        <div class="filter-group" *ngIf="activeTab !== 'TIME'">
+        <div class="filter-group" *ngIf="activeTab === 'TOTAL'">
           <label>Từ ngày</label>
           <input type="date" class="form-input" [(ngModel)]="startDateInput" name="startDate"/>
         </div>
 
-        <div class="filter-group" *ngIf="activeTab !== 'TIME'">
+        <div class="filter-group" *ngIf="activeTab === 'TOTAL'">
           <label>Đến ngày</label>
           <input type="date" class="form-input" [(ngModel)]="endDateInput" name="endDate"/>
         </div>
-        <div class="filter-group" *ngIf="activeTab === 'TIME'">
+        <div class="filter-group" *ngIf="activeTab === 'TIME' || activeTab === 'REGION'">
           <label>Năm</label>
           <input type="number" class="form-input" [(ngModel)]="yearInput" name="year"
                 min="1900" max="2100" step="1" />

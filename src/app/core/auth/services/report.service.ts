@@ -8,7 +8,8 @@ import { SalesQuarterResponse,
         SalesCustomerResponse, 
         SalesProductResponse, 
         FilterRequest, 
-        SalesMonthResponse 
+        SalesMonthResponse, 
+        SalesRegionResponse
 } from '../../../features/manager/reports/reports.model';
 @Injectable({
   providedIn: 'root'
@@ -45,6 +46,12 @@ export class ReportService {
     if(!this.authService.isManager() || !this.authService.isLoggedIn()) throw new Error('Access denied');
     return this.authService.retryWithTokenRefresh(() =>
         this.http.post<SaleReportResponse<SalesQuarterResponse>>(`${this.reportUrl}/revenue-report-by-quarter?year=${year}`, null)
+    );
+  }
+  loadRegionRevenue(year: number): Observable<SaleReportResponse<SalesRegionResponse>> {
+    if(!this.authService.isManager() || !this.authService.isLoggedIn()) throw new Error('Access denied');
+    return this.authService.retryWithTokenRefresh(() =>
+        this.http.post<SaleReportResponse<SalesRegionResponse>>(`${this.reportUrl}/revenue-report-by-region?year=${year}`, null)
     );
   }
 }
