@@ -8,7 +8,8 @@ import { CurrencyPipe } from '../../../shared/pipes/currency.pipe';
 import { ModalService } from '../../../shared/components/modal/modal.service';
 import { AddPriceComponent } from './add-price/add-price.component';
 import { UpdatePriceComponent } from './update-price/update-price.component';
-
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 @Component({
   selector: 'app-manager-price',
   standalone: true,
@@ -43,6 +44,8 @@ export class ProductPriceHistoryComponent implements OnInit {
     startdate: '',
     enddate: '',
   };
+
+  private EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
   constructor(
     private priceHistoryService: PriceHistoryService,
@@ -182,7 +185,15 @@ export class ProductPriceHistoryComponent implements OnInit {
   }
 
   exportExcel(): void {
-    alert('TODO: xuất dữ liệu ra Excel');
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.priceHistoryData);
+    const wb: XLSX.WorkBook = {
+      Sheets: { 'List price': ws },
+      SheetNames: ['List price'],
+    };
+
+    const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const data: Blob = new Blob([excelBuffer], { type: this.EXCEL_TYPE });
+    saveAs(data, 'list-price.xlsx');
   }
 
   loadCurrentPrices(page?: number, size?: number): void {
