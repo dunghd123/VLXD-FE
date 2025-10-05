@@ -193,7 +193,12 @@ export class ProductPriceHistoryComponent implements OnInit {
 
     const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     const data: Blob = new Blob([excelBuffer], { type: this.EXCEL_TYPE });
-    saveAs(data, 'list-price.xlsx');
+    if(this.activeTab === 'current') {
+      saveAs(data, 'list-current-price.xlsx');
+      return;
+    }else if (this.activeTab === 'history') {
+      saveAs(data, 'list-history-price.xlsx');
+    }
   }
 
   loadCurrentPrices(page?: number, size?: number): void {
